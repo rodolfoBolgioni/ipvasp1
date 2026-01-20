@@ -688,7 +688,7 @@
                 const isSelected = selectedDeputies.has(d.email);
 
                 const mailSubject = encodeURIComponent("Apresentação de Projeto - IPVA 1% - Plano de Viabilidade");
-                const mailBody = encodeURIComponent(`Excelentíssimo(a) Deputado(a) ${d.name},\n\nComo cidadão, solicito que analise e apresente na Assembleia Legislativa o projeto do IPVA 1%.\n\nO plano de viabilidade técnica pode ser acessado no link: http://ipva1sp.com.br/plano_viabilidade.pdf\n\nContamos com seu apoio pela liberdade econômica de quem produz.\n\nAtt,\nCidadão Paulista`);
+                const mailBody = encodeURIComponent(`Excelentíssimo(a) Deputado(a) ${d.name},\n\nComo cidadão, solicito que analise e apoie o projeto do IPVA 1%.\n\nA proposta visa reduzir a carga tributária e trazer mais liberdade econômica para quem produz.\nConfira os detalhes e o plano de viabilidade técnica no site: http://ipva1sp.com.br\n\nContamos com seu apoio para dar validade e movimento a esta proposta.\n\nAtt,\nCidadão Paulista`);
                 const mailLink = `mailto:${d.email}?subject=${mailSubject}&body=${mailBody}`;
 
                 const card = document.createElement('div');
@@ -701,7 +701,7 @@
 
                 const actionHtml = `
                     <div class="mt-auto pt-3 border-t border-white/10 flex gap-2">
-                        <a href="${mailLink}" target="_blank" class="flex-1 bg-teal-600 hover:bg-teal-500 text-white py-2 rounded-lg text-[10px] font-black uppercase tracking-wider flex items-center justify-center transition">
+                        <a href="${mailLink}" class="flex-1 bg-teal-600 hover:bg-teal-500 text-white py-2 rounded-lg text-[10px] font-black uppercase tracking-wider flex items-center justify-center transition">
                             Individual
                         </a>
                     </div>
