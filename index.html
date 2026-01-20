@@ -790,96 +790,101 @@
                 renderDeputados();
             });
         }
-    </script>
-    // --- FUNÇÕES AUXILIARES ---
-    function getRawValue() {
-    const input = document.getElementById('priceInput');
-    if (!input) return 0;
-    let val = input.value;
-    if (!val) return 0;
 
-    // Se for numero puro (ex: 100000) - fallback
-    if (/^\d+$/.test(val)) return parseFloat(val);
+        // --- FUNÇÕES AUXILIARES ---
+        function getRawValue() {
+            const input = document.getElementById('priceInput');
+            if (!input) return 0;
+            let val = input.value;
+            if (!val) return 0;
 
-    // Logica principal: Remove tudo que nao é digito, divide por 100
-    let clean = val.replace(/\D/g, "");
-    return (parseFloat(clean) / 100) || 0;
-    }
+            // Se for numero puro (ex: 100000) - fallback
+            if (/^\d+$/.test(val)) return parseFloat(val);
 
-    // Formatação de Moeda com Tratamento de Cursor
-    const priceInput = document.getElementById('priceInput');
+            // Logica principal: Remove tudo que nao é digito, divide por 100
+            let clean = val.replace(/\D/g, "");
+            return (parseFloat(clean) / 100) || 0;
+        }
 
-    priceInput.addEventListener('input', function (e) {
-    let start = this.selectionStart;
-    let currentLen = this.value.length;
+        // Formatação de Moeda com Tratamento de Cursor
+        const priceInput = document.getElementById('priceInput');
 
-    let value = this.value.replace(/\D/g, "");
-    let numberVal = (parseInt(value) / 100).toFixed(2);
+        priceInput.addEventListener('input', function (e) {
+            let start = this.selectionStart;
+            let currentLen = this.value.length;
 
-    let formatted = "R$ " + numberVal.replace('.', ',').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1.");
+            let value = this.value.replace(/\D/g, "");
+            let numberVal = (parseInt(value) / 100).toFixed(2);
 
-    if (isNaN(parseInt(value))) {
-    formatted = "R$ 0,00";
-    }
+            let formatted = "R$ " + numberVal.replace('.', ',').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1.");
 
-    this.value = formatted;
+            if (isNaN(parseInt(value))) {
+                formatted = "R$ 0,00";
+            }
 
-    let newLen = this.value.length;
-    let cursorOffset = newLen - currentLen;
-    let newCursor = start + cursorOffset;
+            this.value = formatted;
 
-    if (newCursor < 3) newCursor=3; this.setSelectionRange(newCursor, newCursor); updateCalculations(); });
-        priceInput.addEventListener('paste', function (e) { e.preventDefault(); let pasted=(e.clipboardData ||
-        window.clipboardData).getData('text'); let clean=pasted.replace(/\D/g, "" ); // Simula input
-        document.execCommand("insertText", false, clean); }); // --- LOGICA DOS DEPUTADOS --- let selectedDeputies=new
-        Set(); function renderDeputados(filter="" ) { const grid=document.getElementById('deputadosGrid'); if (!grid)
-        return; // Verificação de Segurança da Lista if (typeof deputados==='undefined' || !Array.isArray(deputados)) {
-        grid.innerHTML='<div class="col-span-full text-center text-red-500 bg-red-900/10 p-4 rounded-lg">Erro: Lista de deputados não carregada. Tente recarregar (CTRL+F5).</div>'
-        ; console.error("Deputados array missing"); return; } // Garante altura mínima grid.style.minHeight="250px" ;
-        grid.innerHTML="" ; const term=filter.toLowerCase(); const filtered=deputados.filter(d=>
-        d.name.toLowerCase().includes(term) ||
-        d.party.toLowerCase().includes(term) ||
-        d.email.toLowerCase().includes(term)
+            let newLen = this.value.length;
+            let cursorOffset = newLen - currentLen;
+            let newCursor = start + cursorOffset;
+
+            if (newCursor < 3) newCursor = 3; this.setSelectionRange(newCursor, newCursor); updateCalculations();
+        });
+        priceInput.addEventListener('paste', function (e) {
+            e.preventDefault(); let pasted = (e.clipboardData ||
+                window.clipboardData).getData('text'); let clean = pasted.replace(/\D/g, ""); // Simula input
+            document.execCommand("insertText", false, clean);
+        }); // --- LOGICA DOS DEPUTADOS --- let selectedDeputies=new
+        Set(); function renderDeputados(filter = "") {
+            const grid = document.getElementById('deputadosGrid'); if (!grid)
+                return; // Verificação de Segurança da Lista if (typeof deputados==='undefined' || !Array.isArray(deputados)) {
+            grid.innerHTML = '<div class="col-span-full text-center text-red-500 bg-red-900/10 p-4 rounded-lg">Erro: Lista de deputados não carregada. Tente recarregar (CTRL+F5).</div>'
+                ; console.error("Deputados array missing"); return;
+        } // Garante altura mínima grid.style.minHeight="250px" ;
+        grid.innerHTML = ""; const term = filter.toLowerCase(); const filtered = deputados.filter(d =>
+            d.name.toLowerCase().includes(term) ||
+            d.party.toLowerCase().includes(term) ||
+            d.email.toLowerCase().includes(term)
         );
 
         if (filtered.length === 0) {
-        grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-500 italic">Nenhum deputado encontrado
+            grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-500 italic">Nenhum deputado encontrado
             para "${filter}".</div>`;
-        updateActionBar();
-        return;
+            updateActionBar();
+            return;
         }
 
         filtered.forEach((d) => {
-        const isSelected = selectedDeputies.has(d.email);
+            const isSelected = selectedDeputies.has(d.email);
 
-        // Mailto logic
-        const mailSubject = encodeURIComponent("Apresentação de Projeto - IPVA 1% - Plano de Viabilidade");
-        const mailBody = encodeURIComponent(`Excelentíssimo(a) Deputado(a) ${d.name},\n\nComo cidadão, solicito que
+            // Mailto logic
+            const mailSubject = encodeURIComponent("Apresentação de Projeto - IPVA 1% - Plano de Viabilidade");
+            const mailBody = encodeURIComponent(`Excelentíssimo(a) Deputado(a) ${d.name},\n\nComo cidadão, solicito que
         analise e apresente na Assembleia Legislativa o projeto do IPVA 1%.\n\nO plano de viabilidade técnica pode ser
         acessado no link: http://ipva1sp.com.br/plano_viabilidade.pdf\n\nContamos com seu apoio pela liberdade econômica
         de quem produz.\n\nAtt,\nCidadão Paulista`);
-        const mailLink = `mailto:${d.email}?subject=${mailSubject}&body=${mailBody}`;
+            const mailLink = `mailto:${d.email}?subject=${mailSubject}&body=${mailBody}`;
 
-        const card = document.createElement('div');
-        card.className = `bg-white/5 border ${isSelected ? 'border-teal-500 bg-teal-500/10' : 'border-white/10'} p-4
+            const card = document.createElement('div');
+            card.className = `bg-white/5 border ${isSelected ? 'border-teal-500 bg-teal-500/10' : 'border-white/10'} p-4
         rounded-xl hover:bg-white/10 transition group flex flex-col justify-between h-full relative cursor-pointer
         min-h-[160px]`;
 
-        card.onclick = (e) => {
-        if (e.target.closest('a')) return;
-        toggleDeputySelection(d.email);
-        };
+            card.onclick = (e) => {
+                if (e.target.closest('a')) return;
+                toggleDeputySelection(d.email);
+            };
 
-        // Checkbox
-        const checkboxHtml = `
+            // Checkbox
+            const checkboxHtml = `
         <div
             class="absolute top-4 right-4 w-5 h-5 rounded border ${isSelected ? 'bg-teal-500 border-teal-500' : 'border-slate-600'} flex items-center justify-center transition">
             ${isSelected ? '<i class="fa-solid fa-check text-white text-xs"></i>' : ''}
         </div>
         `;
 
-        // Info block
-        const infoHtml = `
+            // Info block
+            const infoHtml = `
         <div class="pr-6">
             <div class="flex justify-between items-start mb-2">
                 <h3 class="font-bold text-sm text-slate-200 group-hover:text-teal-400 transition line-clamp-2">${d.name}
@@ -904,8 +909,8 @@
         </div>
         `;
 
-        // Action Button
-        const actionHtml = `
+            // Action Button
+            const actionHtml = `
         <div class="mt-auto pt-3 border-t border-white/10">
             <a href="${mailLink}"
                 class="bg-slate-800 hover:bg-slate-700 text-slate-300 w-full py-2 rounded-lg text-[10px] font-black uppercase tracking-wider flex items-center justify-center transition">
@@ -914,81 +919,81 @@
         </div>
         `;
 
-        card.innerHTML = checkboxHtml + infoHtml + actionHtml;
-        grid.appendChild(card);
+            card.innerHTML = checkboxHtml + infoHtml + actionHtml;
+            grid.appendChild(card);
         });
 
         updateActionBar();
         }
 
         function toggleDeputySelection(email) {
-        if (selectedDeputies.has(email)) {
-        selectedDeputies.delete(email);
-        } else {
-        selectedDeputies.add(email);
-        }
-        // Re-render mantendo o termo atual
-        const currentFilter = document.getElementById('deputadoSearch').value;
-        renderDeputados(currentFilter);
+            if (selectedDeputies.has(email)) {
+                selectedDeputies.delete(email);
+            } else {
+                selectedDeputies.add(email);
+            }
+            // Re-render mantendo o termo atual
+            const currentFilter = document.getElementById('deputadoSearch').value;
+            renderDeputados(currentFilter);
         }
 
         function selectAllDeputies() {
-        const searchVal = document.getElementById('deputadoSearch').value.toLowerCase();
-        const visible = deputados.filter(d =>
-        d.name.toLowerCase().includes(searchVal) ||
-        d.party.toLowerCase().includes(searchVal)
-        );
+            const searchVal = document.getElementById('deputadoSearch').value.toLowerCase();
+            const visible = deputados.filter(d =>
+                d.name.toLowerCase().includes(searchVal) ||
+                d.party.toLowerCase().includes(searchVal)
+            );
 
-        const allVisibleSelected = visible.every(d => selectedDeputies.has(d.email));
+            const allVisibleSelected = visible.every(d => selectedDeputies.has(d.email));
 
-        if (allVisibleSelected) {
-        visible.forEach(d => selectedDeputies.delete(d.email));
-        } else {
-        visible.forEach(d => selectedDeputies.add(d.email));
-        }
-        renderDeputados(searchVal);
+            if (allVisibleSelected) {
+                visible.forEach(d => selectedDeputies.delete(d.email));
+            } else {
+                visible.forEach(d => selectedDeputies.add(d.email));
+            }
+            renderDeputados(searchVal);
         }
 
         function updateActionBar() {
-        const bar = document.getElementById('bulkActionBar');
-        const countSpan = document.getElementById('selectedCount');
+            const bar = document.getElementById('bulkActionBar');
+            const countSpan = document.getElementById('selectedCount');
 
-        if (countSpan) countSpan.innerText = selectedDeputies.size;
+            if (countSpan) countSpan.innerText = selectedDeputies.size;
 
-        if (bar) {
-        if (selectedDeputies.size > 0) {
-        bar.classList.remove('translate-y-full');
-        } else {
-        bar.classList.add('translate-y-full');
-        }
-        }
+            if (bar) {
+                if (selectedDeputies.size > 0) {
+                    bar.classList.remove('translate-y-full');
+                } else {
+                    bar.classList.add('translate-y-full');
+                }
+            }
         }
 
         function sendBulkEmail() {
-        const emails = Array.from(selectedDeputies).join(',');
+            const emails = Array.from(selectedDeputies).join(',');
 
-        if (emails.length === 0) return;
-        if (emails.length > 1800) {
-        alert("Aviso: Muitos emails selecionados. Isso pode falhar em alguns apps. Tente selecionar menos.");
-        }
+            if (emails.length === 0) return;
+            if (emails.length > 1800) {
+                alert("Aviso: Muitos emails selecionados. Isso pode falhar em alguns apps. Tente selecionar menos.");
+            }
 
-        const mailSubject = encodeURIComponent("Apresentação de Projeto - IPVA 1% - Plano de Viabilidade");
-        const mailBody = encodeURIComponent("Prezados Deputados,\n\nNa qualidade de cidadão paulista, solicito atenção
-        ao plano de viabilidade técnica do IPVA 1%, disponível em:
-        http://ipva1sp.com.br/plano_viabilidade.pdf\n\nContamos com o apoio da Assembleia para devolver competitividade
-        ao Estado.\n\nAtt,\nCidadão Paulista");
-        const mailLink = `mailto:?bcc=${emails}&subject=${mailSubject}&body=${mailBody}`;
+            const mailSubject = encodeURIComponent("Apresentação de Projeto - IPVA 1% - Plano de Viabilidade");
+            const mailBody = encodeURIComponent("Prezados Deputados,\n\nNa qualidade de cidadão paulista, solicito atenção
+        ao plano de viabilidade técnica do IPVA 1 %, disponível em:
+            http://ipva1sp.com.br/plano_viabilidade.pdf\n\nContamos com o apoio da Assembleia para devolver competitividade
+        ao Estado.\n\nAtt, \nCidadão Paulista");
+            const mailLink = `mailto:?bcc=${emails}&subject=${mailSubject}&body=${mailBody}`;
 
-        window.location.href = mailLink;
+            window.location.href = mailLink;
         }
 
 
         // --- CÁLCULOS E GRÁFICOS ---
         function updateCalculations() {
-        const price = getRawValue();
+            const price = getRawValue();
 
-        if (isNaN(price) || price <= 0) return; const taxes=price * 0.413; const cost=price - taxes; const markup=cost>
-            0 ? (taxes / cost) * 100 : 0;
+            if (isNaN(price) || price <= 0) return; const taxes = price * 0.413; const cost = price - taxes; const markup = cost >
+                0 ? (taxes / cost) * 100 : 0;
             const currentIpva = price * 0.04;
             const proposedIpva = price * 0.01;
             const savings = currentIpva - proposedIpva;
@@ -1000,20 +1005,27 @@
             const ipvaProposedElement = document.getElementById('ipvaProposed');
             const ipvaSavingsElement = document.getElementById('ipvaSavings');
 
-            if (costElement) costElement.innerText = cost.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL'
+            if (costElement) costElement.innerText = cost.toLocaleString('pt-BR', {
+                style: 'currency', currency: 'BRL'
             });
             if (markupElement) markupElement.innerText = markup.toFixed(2).replace('.', ',') + "%";
-            if (ipvaCurrentElement) ipvaCurrentElement.innerText = currentIpva.toLocaleString('pt-BR', { style:
-            'currency', currency: 'BRL' });
-            if (ipvaProposedElement) ipvaProposedElement.innerText = proposedIpva.toLocaleString('pt-BR', { style:
-            'currency', currency: 'BRL' });
-            if (ipvaSavingsElement) ipvaSavingsElement.innerText = savings.toLocaleString('pt-BR', { style: 'currency',
-            currency: 'BRL' });
+            if (ipvaCurrentElement) ipvaCurrentElement.innerText = currentIpva.toLocaleString('pt-BR', {
+                style:
+                    'currency', currency: 'BRL'
+            });
+            if (ipvaProposedElement) ipvaProposedElement.innerText = proposedIpva.toLocaleString('pt-BR', {
+                style:
+                    'currency', currency: 'BRL'
+            });
+            if (ipvaSavingsElement) ipvaSavingsElement.innerText = savings.toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            });
 
             updateChart(cost, taxes);
-            }
+        }
 
-            function updateChart(cost, taxes) {
+        function updateChart(cost, taxes) {
             const ctxElement = document.getElementById('markupChart');
             if (!ctxElement) return;
 
@@ -1025,54 +1037,54 @@
 
             // Globals
             if (Chart.defaults && !Chart.defaults.font.family.includes('Inter')) {
-            Chart.defaults.font.family = "'Inter', sans-serif";
+                Chart.defaults.font.family = "'Inter', sans-serif";
             }
 
             if (chartInstance) {
-            chartInstance.data.datasets[0].data = [cost, taxes];
-            chartInstance.data.labels = [costLabel, taxLabel];
-            chartInstance.update();
+                chartInstance.data.datasets[0].data = [cost, taxes];
+                chartInstance.data.labels = [costLabel, taxLabel];
+                chartInstance.update();
             } else {
-            chartInstance = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-            labels: [costLabel, taxLabel],
-            datasets: [{
-            data: [cost, taxes],
-            backgroundColor: ['#1e293b', '#14b8a6'],
-            borderWidth: 0,
-            hoverOffset: 15
-            }]
-            },
-            options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            layout: { padding: 20 },
-            plugins: {
-            legend: {
-            position: 'bottom',
-            labels: {
-            padding: 20,
-            font: { size: 14, weight: '700', family: "'Inter', sans-serif" },
-            color: '#64748b',
-            usePointStyle: true,
-            boxWidth: 10
+                chartInstance = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: [costLabel, taxLabel],
+                        datasets: [{
+                            data: [cost, taxes],
+                            backgroundColor: ['#1e293b', '#14b8a6'],
+                            borderWidth: 0,
+                            hoverOffset: 15
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        layout: { padding: 20 },
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    padding: 20,
+                                    font: { size: 14, weight: '700', family: "'Inter', sans-serif" },
+                                    color: '#64748b',
+                                    usePointStyle: true,
+                                    boxWidth: 10
+                                }
+                            },
+                            tooltip: {
+                                bodyFont: { size: 16, weight: 'bold', family: "'Inter', sans-serif" },
+                                padding: 12,
+                                cornerRadius: 8
+                            }
+                        },
+                        cutout: '65%'
+                    }
+                });
             }
-            },
-            tooltip: {
-            bodyFont: { size: 16, weight: 'bold', family: "'Inter', sans-serif" },
-            padding: 12,
-            cornerRadius: 8
-            }
-            },
-            cutout: '65%'
-            }
-            });
-            }
-            }
+        }
 
-            // --- INIT ---
-            window.addEventListener('load', function () {
+        // --- INIT ---
+        window.addEventListener('load', function () {
             const input = document.getElementById('priceInput');
             if (input && !input.value) input.value = "R$ 100.000,00";
 
@@ -1081,8 +1093,8 @@
 
             // Render deputies with brief delay
             setTimeout(renderDeputados, 100);
-            });
-            </script>
+        });
+    </script>
 </body>
 
 </html>
