@@ -406,7 +406,7 @@
                     <span class="text-white text-xs font-bold uppercase tracking-wide">
                         <span id="selectedCount" class="text-teal-400 text-lg mr-1 font-black">0</span> Selecionados
                     </span>
-                    <button onclick="sendBulkEmail()"
+                    <button type="button" onclick="sendBulkEmail()"
                         class="bg-teal-500 hover:bg-teal-400 text-slate-900 px-6 py-3 rounded-lg font-black uppercase text-xs tracking-widest transition shadow-lg flex items-center">
                         <i class="fa-regular fa-paper-plane mr-2"></i> Enviar Cobrança em Massa
                     </button>
@@ -769,7 +769,8 @@
             }
         }
 
-        function sendBulkEmail() {
+        function sendBulkEmail(event) {
+            if (event) event.preventDefault();
             const emails = Array.from(selectedDeputies);
             if (emails.length === 0) return;
 
@@ -782,13 +783,12 @@
 
             const messageTemplate = `Prezados Deputados,
 
-Como cidadão, solicito que analisem e apresentem na Assembleia Legislativa o projeto do IPVA 1%.
+Como cidadão, solicito que analisem e apoiem o projeto do IPVA 1%.
 
-O plano de viabilidade técnica pode ser acessado no link: http://ipva1sp.com.br/plano_viabilidade.pdf
+A proposta visa reduzir a carga tributária e trazer mais liberdade econômica para quem produz.
+Confira os detalhes e o plano de viabilidade técnica no site: http://ipva1sp.com.br
 
-Acreditamos que a redução da carga tributária trará mais justiça e crescimento para São Paulo.
-
-Contamos com seu apoio.
+Contamos com seu apoio para dar validade e movimento a esta proposta.
 
 Att,
 Cidadão Paulista`;
@@ -836,8 +836,13 @@ Cidadão Paulista`;
         <div class="flex justify-between items-start mb-6">
             <div>
                 <h2 class="text-2xl font-black text-slate-900 uppercase">Mobilização Manual</h2>
-                <p class="text-sm text-slate-500 mt-1">Para garantir que sua mensagem chegue e não caia no SPAM, o
-                    envio deve ser feito da <strong>sua própria caixa de e-mail</strong>.</p>
+                <p class="text-sm text-slate-500 mt-1">
+                    Para garantir mais <strong>visibilidade e validação</strong>, o envio deve ser feito da <strong>sua
+                        própria caixa de e-mail</strong>.
+                    <br><br>
+                    Realizamos este trabalho para facilitar o processo, mas o envio não pode ser automatizado. É o seu
+                    envio manual que dá movimento e autenticidade à proposta.
+                </p>
             </div>
             <button onclick="closeEmailModal()" class="text-slate-400 hover:text-red-500 transition text-xl p-2"><i
                     class="fa-solid fa-xmark"></i></button>
