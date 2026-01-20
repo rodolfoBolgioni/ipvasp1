@@ -1,0 +1,636 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plano SP 2027: Liberdade para o Cidadão que Produz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="icon" href="favicon.png" type="image/x-icon">
+    <!-- MathJax para fórmulas profissionais -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 220px;
+            width: 100%;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            border: 1px solid #e2e8f0;
+        }
+
+        .ai-gradient {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        }
+
+        .source-tag {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: #64748b;
+            background: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-top: 4px;
+        }
+
+        .loading-spinner {
+            border: 3px solid rgba(255, 255, 255, .3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .logic-box {
+            background: #fef2f2;
+            border-left: 4px solid #ef4444;
+        }
+    </style>
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+</head>
+
+<body class="antialiased">
+
+    <!-- Navegação -->
+    <nav class="bg-white/95 backdrop-blur-md sticky top-0 z-50 shadow-sm border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex justify-between items-center">
+            <div class="flex items-center">
+                <i class="fa-solid fa-car-side text-teal-600 text-2xl mr-3"></i>
+                <span class="font-black text-xl text-slate-800 tracking-tighter uppercase">IPVA<span
+                        class="text-teal-600">1%</span>SP</span>
+            </div>
+            <div class="hidden md:flex space-x-6 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                <a href="#analise" class="hover:text-teal-600 transition">Análise Financeira</a>
+                <a href="#plano" class="hover:text-teal-600 transition">Plano de Viabilidade</a>
+                <a href="#deputados" class="hover:text-teal-600 transition">Assembleia</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header / Manifesto de Liberdade -->
+    <header class="bg-slate-900 text-white pt-16 pb-32 relative text-center">
+        <div class="max-w-7xl mx-auto px-6 relative z-10">
+            <div
+                class="inline-block bg-teal-500/20 text-teal-400 text-[10px] font-black px-4 py-1.5 rounded-full mb-6 border border-teal-500/30 uppercase tracking-[0.2em]">
+                Movimento Apartidário pela Liberdade Econômica
+            </div>
+            <h1 class="text-4xl md:text-6xl font-black mb-6 leading-tight">IPVA 1%: Liberdade para o <br><span
+                    class="text-teal-400">Cidadão que Produz.</span></h1>
+            <p class="text-lg md:text-xl text-slate-400 max-w-3xl mx-auto leading-relaxed">
+                Nosso viés não é político, é a **liberdade das pessoas**. O governo já é sócio de 70% do custo do seu
+                veículo. É hora de devolver esse dinheiro para quem realmente trabalha.
+            </p>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-6 -mt-20 space-y-12 pb-24 relative z-20">
+
+        <!-- SEÇÃO 1: ANÁLISE DO MARKUP E SIMULADOR INTEGRADO -->
+        <section id="analise" class="space-y-8">
+            <div class="card border-t-8 border-teal-500">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-start">
+
+                    <!-- Col 1: Entrada e Custos -->
+                    <div class="space-y-4">
+                        <div>
+                            <h2 class="text-[10px] font-black text-slate-400 uppercase mb-2 tracking-widest">Valor do
+                                Veículo</h2>
+                            <div class="relative">
+                                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold"></span>
+                                <input type="text" id="priceInput" value="R$ 100.000,00"
+                                    class="w-full pl-12 p-3 text-2xl font-black border-2 border-slate-200 rounded-xl focus:border-teal-500 outline-none transition-all text-slate-900"
+                                    placeholder="R$ 100.000,00">
+                            </div>
+                            <span class="source-tag">Base: FIPE / Deep Search 2026</span>
+                        </div>
+                        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                            <span class="block text-[9px] font-black text-slate-400 uppercase">Custo de Produção</span>
+                            <span class="text-lg font-bold text-slate-800" id="costAmount">R$ 58.700,00</span>
+                        </div>
+                        <div class="p-3 bg-red-50 rounded-xl border border-red-100 text-center">
+                            <span class="block text-[9px] text-red-800 font-black uppercase tracking-tighter">Markup
+                                Governamental</span>
+                            <div class="text-2xl font-black text-red-600" id="markupPercent">70,36%</div>
+                        </div>
+                    </div>
+
+                    <!-- Col 2: Gráfico de Markup (FIX: Adição do Canvas) -->
+                    <div class="space-y-2">
+                        <h2 class="text-[10px] font-black text-slate-400 uppercase mb-2 tracking-widest text-center">
+                            Carga na Compra</h2>
+                        <div class="chart-container">
+                            <canvas id="markupChart"></canvas>
+                        </div>
+                        <p class="text-[9px] text-slate-400 text-center italic">Visualização do imposto embutido</p>
+                    </div>
+
+                    <!-- Col 3: Impacto IPVA -->
+                    <div
+                        class="bg-slate-50 rounded-2xl p-4 border border-slate-200 flex flex-col justify-between h-full">
+                        <h2 class="text-[10px] font-black text-slate-400 uppercase mb-4 tracking-widest text-center">
+                            Impacto no Cidadão</h2>
+                        <div class="space-y-3">
+                            <div
+                                class="p-3 bg-white rounded-xl border border-slate-200 text-center relative overflow-hidden">
+                                <span class="text-[8px] font-bold text-slate-400 uppercase">IPVA 4% (Hoje)</span>
+                                <div class="text-xl font-black text-red-400/50 line-through" id="ipvaCurrent">R$
+                                    4.000,00</div>
+                            </div>
+                            <div class="p-3 bg-teal-600 rounded-xl text-center shadow-md">
+                                <span class="text-[8px] font-bold text-teal-100 uppercase">IPVA 1% (Proposto)</span>
+                                <div class="text-xl font-black text-white" id="ipvaProposed">R$ 1.000,00</div>
+                            </div>
+                        </div>
+                        <div class="text-center mt-4 border-t border-slate-200 pt-3">
+                            <span class="text-[9px] font-black text-teal-600 uppercase">Dinheiro Recuperado</span>
+                            <div class="text-2xl font-black text-teal-600" id="ipvaSavings">R$ 3.000,00</div>
+                        </div>
+                    </div>
+
+                    <!-- Col 4: Lógica Matemática -->
+                    <div class="bg-slate-900 text-white rounded-2xl p-4 shadow-xl h-full overflow-y-auto">
+                        <h3
+                            class="text-[9px] font-black text-teal-400 uppercase mb-3 tracking-widest border-b border-white/10 pb-1">
+                            Matemática do Confisco</h3>
+                        <div class="space-y-4 text-[10px] text-slate-300">
+                            <div>
+                                <p class="font-bold text-white mb-1">Cálculo "Por Dentro":</p>
+                                <p class="leading-tight">
+                                    $$ \text{Imp.} = \text{Preço} \times 0,413 $$
+                                </p>
+                            </div>
+                            <div class="logic-box p-2 rounded-lg text-slate-900 bg-red-50">
+                                <p class="font-bold mb-1">Cálculo "Por Fora" (Real):</p>
+                                <p class="leading-tight">
+                                    $$ \text{Markup} = \frac{\text{Impostos}}{\text{Custo}} \approx 70,36\% $$
+                                </p>
+                            </div>
+                            <p class="text-[8px] text-slate-500 italic mt-2">
+                                O IPVA de 4% nominal equivale a uma taxa de **8% ao ano** sobre o valor real produzido.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEÇÃO 2: PLANO DE VIABILIDADE (PDF + VÍDEO) -->
+        <section id="plano" class="space-y-6">
+            <div class="flex items-center justify-between">
+                <h2 class="text-2xl font-black text-slate-900 uppercase">Plano de Viabilidade</h2>
+                <div class="h-1 flex-grow bg-slate-200 mx-6"></div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Vídeo -->
+                <div
+                    class="card p-0 overflow-hidden bg-black aspect-video flex items-center justify-center rounded-2xl shadow-lg border border-slate-200">
+                    <iframe class="w-full h-full" src="https://www.youtube.com/embed/vtjp3SWGuus?si=6ND8NGZ1JhvHXwB"
+                        title="YouTube video player" frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
+                    </iframe>
+                </div>
+
+                <!-- PDF Embed -->
+                <div
+                    class="card p-0 overflow-hidden h-[400px] lg:h-auto rounded-2xl shadow-lg border border-slate-200 relative bg-slate-100 flex flex-col">
+                    <div class="p-3 bg-white border-b border-slate-200 flex justify-between items-center">
+                        <span class="text-[10px] uppercase font-black text-slate-500 flex items-center gap-2">
+                            <i class="fa-solid fa-file-pdf text-red-500"></i> Documento Oficial
+                        </span>
+                        <a href="plano_viabilidade.pdf" target="_blank"
+                            class="text-[10px] font-bold text-teal-600 hover:text-teal-500 uppercase tracking-wider flex items-center gap-1 transition">
+                            <i class="fa-solid fa-expand"></i> Visualizar Completo
+                        </a>
+                    </div>
+                    <div class="relative flex-grow">
+                        <iframe src="plano_viabilidade.pdf" class="w-full h-full absolute inset-0"
+                            style="border: none;">
+                            <p class="text-center p-10 text-slate-500">Seu navegador não suporta a visualização de PDF.
+                                <a href="plano_viabilidade.pdf" class="text-teal-600 font-bold hover:underline">Baixe o
+                                    plano aqui.</a>
+                            </p>
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEÇÃO 3: ASSEMBLEIA LEGISLATIVA (ALESP) -->
+        <section id="deputados" class="card bg-slate-900 text-white relative overflow-hidden p-6 md:p-8">
+            <div class="relative z-10">
+                <div class="flex flex-col md:flex-row justify-between items-end mb-6 gap-4">
+                    <div>
+                        <h2 class="text-2xl font-black uppercase mb-2">Assembleia Legislativa</h2>
+                        <p class="text-slate-400 text-sm max-w-lg leading-relaxed">
+                            Pressione seu representante! Envie um e-mail cobrando o <strong>IPVA 1%</strong>.
+                        </p>
+                    </div>
+                    <div class="w-full md:w-auto flex flex-col md:items-end gap-2">
+                        <div class="relative">
+                            <i
+                                class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
+                            <input type="text" id="deputadoSearch" placeholder="Buscar deputado ou partido..."
+                                class="w-full md:w-64 bg-white/5 border border-white/10 rounded-lg pl-9 p-2.5 text-sm text-white outline-none focus:border-teal-500 transition placeholder-slate-600"
+                                oninput="renderDeputados(this.value)">
+                        </div>
+                        <button onclick="selectAllDeputies()"
+                            class="text-[10px] text-teal-400 font-bold hover:text-teal-300 transition uppercase tracking-wider">
+                            <i class="fa-solid fa-check-double mr-1"></i> Selecionar Todos
+                        </button>
+                    </div>
+                </div>
+
+                <div id="deputadosGrid"
+                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pb-20 max-h-[70vh] overflow-y-auto custom-scrollbar">
+                    <!-- Cards inseridos via JS -->
+                </div>
+
+                <div class="mt-4 text-center">
+                    <a href="https://www.al.sp.gov.br/deputado/contato/" target="_blank"
+                        class="text-[10px] text-slate-500 hover:text-teal-600 uppercase font-bold tracking-widest transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i> Conferir Lista Oficial ALESP
+                    </a>
+                </div>
+
+                <!-- Barra Clustered Action Sticky -->
+                <div id="bulkActionBar"
+                    class="absolute bottom-0 left-0 right-0 bg-teal-900/95 backdrop-blur-md p-4 transform translate-y-full transition-transform duration-300 shadow-2xl border-t border-teal-500/30 flex justify-between items-center z-20">
+                    <span class="text-white text-xs font-bold uppercase tracking-wide">
+                        <span id="selectedCount" class="text-teal-400 text-lg mr-1 font-black">0</span> Selecionados
+                    </span>
+                    <button onclick="sendBulkEmail()"
+                        class="bg-teal-500 hover:bg-teal-400 text-slate-900 px-6 py-3 rounded-lg font-black uppercase text-xs tracking-widest transition shadow-lg flex items-center">
+                        <i class="fa-regular fa-paper-plane mr-2"></i> Enviar Cobrança em Massa
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 mt-20 py-10">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <div class="flex items-center justify-center mb-4">
+                <i class="fa-solid fa-car-side text-teal-600 text-xl mr-2"></i>
+                <span class="font-black text-lg text-slate-800 tracking-tighter uppercase">IPVA<span
+                        class="text-teal-600">1%</span>SP</span>
+            </div>
+            <p class="text-xs text-slate-500 font-medium max-w-md mx-auto leading-relaxed">
+                Este é um projeto independente de iniciativa popular. O objetivo é promover o debate sobre a redução da
+                carga tributária e aumento da liberdade econômica no Estado de São Paulo.
+            </p>
+            <div
+                class="mt-6 text-[10px] text-slate-400 font-bold uppercase tracking-widest flex flex-col gap-1 items-center">
+                <span>&copy; 2027 IPVA 1% SP - Todos os direitos reservados.</span>
+                <span class="opacity-60 text-[9px] lowercase font-normal">Atualizado: 20/01/2026 14:19</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="deputados.js"></script>
+    <script>
+        // Variável global para o gráfico
+        let chartInstance = null;
+
+        // --- FUNÇÕES AUXILIARES ---
+        function getRawValue() {
+            const input = document.getElementById('priceInput');
+            if (!input) return 0;
+            let val = input.value;
+            if (!val) return 0;
+
+            // Se for numero puro (ex: 100000) - fallback
+            if (/^\d+$/.test(val)) return parseFloat(val);
+
+            // Logica principal: Remove tudo que nao é digito, divide por 100
+            let clean = val.replace(/\D/g, "");
+            return (parseFloat(clean) / 100) || 0;
+        }
+
+        // Formatação de Moeda com Tratamento de Cursor
+        const priceInput = document.getElementById('priceInput');
+
+        priceInput.addEventListener('input', function (e) {
+            let start = this.selectionStart;
+            let currentLen = this.value.length;
+
+            let value = this.value.replace(/\D/g, "");
+            let numberVal = (parseInt(value) / 100).toFixed(2);
+
+            let formatted = "R$ " + numberVal.replace('.', ',').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1.");
+
+            if (isNaN(parseInt(value))) {
+                formatted = "R$ 0,00";
+            }
+
+            this.value = formatted;
+
+            let newLen = this.value.length;
+            let cursorOffset = newLen - currentLen;
+            let newCursor = start + cursorOffset;
+
+            if (newCursor < 3) newCursor = 3;
+
+            this.setSelectionRange(newCursor, newCursor);
+
+            updateCalculations();
+        });
+
+        priceInput.addEventListener('paste', function (e) {
+            e.preventDefault();
+            let pasted = (e.clipboardData || window.clipboardData).getData('text');
+            let clean = pasted.replace(/\D/g, "");
+            // Simula input
+            document.execCommand("insertText", false, clean);
+        });
+
+
+        // --- LOGICA DOS DEPUTADOS ---
+        let selectedDeputies = new Set();
+
+        function renderDeputados(filter = "") {
+            const grid = document.getElementById('deputadosGrid');
+            if (!grid) return;
+
+            // Verificação de Segurança da Lista
+            if (typeof deputados === 'undefined' || !Array.isArray(deputados)) {
+                grid.innerHTML = '<div class="col-span-full text-center text-red-500 bg-red-900/10 p-4 rounded-lg">Erro: Lista de deputados não carregada. Tente recarregar (CTRL+F5).</div>';
+                console.error("Deputados array missing");
+                return;
+            }
+
+            // Garante altura mínima
+            grid.style.minHeight = "250px";
+
+            grid.innerHTML = "";
+            const term = filter.toLowerCase();
+
+            const filtered = deputados.filter(d =>
+                d.name.toLowerCase().includes(term) ||
+                d.party.toLowerCase().includes(term) ||
+                d.email.toLowerCase().includes(term)
+            );
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-500 italic">Nenhum deputado encontrado para "${filter}".</div>`;
+                updateActionBar();
+                return;
+            }
+
+            filtered.forEach((d) => {
+                const isSelected = selectedDeputies.has(d.email);
+
+                // Mailto logic
+                const mailSubject = encodeURIComponent("Apresentação de Projeto - IPVA 1% - Plano de Viabilidade");
+                const mailBody = encodeURIComponent(`Excelentíssimo(a) Deputado(a) ${d.name},\n\nComo cidadão, solicito que analise e apresente na Assembleia Legislativa o projeto do IPVA 1%.\n\nO plano de viabilidade técnica pode ser acessado no link: http://ipva1sp.com.br/plano_viabilidade.pdf\n\nContamos com seu apoio pela liberdade econômica de quem produz.\n\nAtt,\nCidadão Paulista`);
+                const mailLink = `mailto:${d.email}?subject=${mailSubject}&body=${mailBody}`;
+
+                const card = document.createElement('div');
+                card.className = `bg-white/5 border ${isSelected ? 'border-teal-500 bg-teal-500/10' : 'border-white/10'} p-4 rounded-xl hover:bg-white/10 transition group flex flex-col justify-between h-full relative cursor-pointer min-h-[160px]`;
+
+                card.onclick = (e) => {
+                    if (e.target.closest('a')) return;
+                    toggleDeputySelection(d.email);
+                };
+
+                // Checkbox
+                const checkboxHtml = `
+                    <div class="absolute top-4 right-4 w-5 h-5 rounded border ${isSelected ? 'bg-teal-500 border-teal-500' : 'border-slate-600'} flex items-center justify-center transition">
+                        ${isSelected ? '<i class="fa-solid fa-check text-white text-xs"></i>' : ''}
+                    </div>
+                `;
+
+                // Info block
+                const infoHtml = `
+                    <div class="pr-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-bold text-sm text-slate-200 group-hover:text-teal-400 transition line-clamp-2">${d.name}</h3>
+                            <span class="text-[9px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded font-bold border border-slate-700 whitespace-nowrap">${d.party}</span>
+                        </div>
+                        <div class="space-y-1.5 text-xs text-slate-400 mb-4">
+                            <div class="flex items-center">
+                                <i class="fa-solid fa-door-open w-5 text-slate-500"></i> 
+                                <span>Sala ${d.room}</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fa-solid fa-phone w-5 text-slate-500"></i> 
+                                <span>${d.phone}</span>
+                            </div>
+                            <div class="flex items-center text-slate-500" title="${d.email}">
+                                <i class="fa-solid fa-envelope w-5"></i> 
+                                <span class="truncate w-full block">${d.email}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // Action Button
+                const actionHtml = `
+                    <div class="mt-auto pt-3 border-t border-white/10">
+                        <a href="${mailLink}" class="bg-slate-800 hover:bg-slate-700 text-slate-300 w-full py-2 rounded-lg text-[10px] font-black uppercase tracking-wider flex items-center justify-center transition">
+                            <i class="fa-regular fa-paper-plane mr-2"></i> Individual
+                        </a>
+                    </div>
+                `;
+
+                card.innerHTML = checkboxHtml + infoHtml + actionHtml;
+                grid.appendChild(card);
+            });
+
+            updateActionBar();
+        }
+
+        function toggleDeputySelection(email) {
+            if (selectedDeputies.has(email)) {
+                selectedDeputies.delete(email);
+            } else {
+                selectedDeputies.add(email);
+            }
+            // Re-render mantendo o termo atual
+            const currentFilter = document.getElementById('deputadoSearch').value;
+            renderDeputados(currentFilter);
+        }
+
+        function selectAllDeputies() {
+            const searchVal = document.getElementById('deputadoSearch').value.toLowerCase();
+            const visible = deputados.filter(d =>
+                d.name.toLowerCase().includes(searchVal) ||
+                d.party.toLowerCase().includes(searchVal)
+            );
+
+            const allVisibleSelected = visible.every(d => selectedDeputies.has(d.email));
+
+            if (allVisibleSelected) {
+                visible.forEach(d => selectedDeputies.delete(d.email));
+            } else {
+                visible.forEach(d => selectedDeputies.add(d.email));
+            }
+            renderDeputados(searchVal);
+        }
+
+        function updateActionBar() {
+            const bar = document.getElementById('bulkActionBar');
+            const countSpan = document.getElementById('selectedCount');
+
+            if (countSpan) countSpan.innerText = selectedDeputies.size;
+
+            if (bar) {
+                if (selectedDeputies.size > 0) {
+                    bar.classList.remove('translate-y-full');
+                } else {
+                    bar.classList.add('translate-y-full');
+                }
+            }
+        }
+
+        function sendBulkEmail() {
+            const emails = Array.from(selectedDeputies).join(',');
+
+            if (emails.length === 0) return;
+            if (emails.length > 1800) {
+                alert("Aviso: Muitos emails selecionados. Isso pode falhar em alguns apps. Tente selecionar menos.");
+            }
+
+            const mailSubject = encodeURIComponent("Apresentação de Projeto - IPVA 1% - Plano de Viabilidade");
+            const mailBody = encodeURIComponent("Prezados Deputados,\n\nNa qualidade de cidadão paulista, solicito atenção ao plano de viabilidade técnica do IPVA 1%, disponível em: http://ipva1sp.com.br/plano_viabilidade.pdf\n\nContamos com o apoio da Assembleia para devolver competitividade ao Estado.\n\nAtt,\nCidadão Paulista");
+            const mailLink = `mailto:?bcc=${emails}&subject=${mailSubject}&body=${mailBody}`;
+
+            window.location.href = mailLink;
+        }
+
+
+        // --- CÁLCULOS E GRÁFICOS ---
+        function updateCalculations() {
+            const price = getRawValue();
+
+            if (isNaN(price) || price <= 0) return;
+
+            const taxes = price * 0.413;
+            const cost = price - taxes;
+            const markup = cost > 0 ? (taxes / cost) * 100 : 0;
+            const currentIpva = price * 0.04;
+            const proposedIpva = price * 0.01;
+            const savings = currentIpva - proposedIpva;
+
+            // DOM Updates
+            const costElement = document.getElementById('costAmount');
+            const markupElement = document.getElementById('markupPercent');
+            const ipvaCurrentElement = document.getElementById('ipvaCurrent');
+            const ipvaProposedElement = document.getElementById('ipvaProposed');
+            const ipvaSavingsElement = document.getElementById('ipvaSavings');
+
+            if (costElement) costElement.innerText = cost.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            if (markupElement) markupElement.innerText = markup.toFixed(2).replace('.', ',') + "%";
+            if (ipvaCurrentElement) ipvaCurrentElement.innerText = currentIpva.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            if (ipvaProposedElement) ipvaProposedElement.innerText = proposedIpva.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            if (ipvaSavingsElement) ipvaSavingsElement.innerText = savings.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+            updateChart(cost, taxes);
+        }
+
+        function updateChart(cost, taxes) {
+            const ctxElement = document.getElementById('markupChart');
+            if (!ctxElement) return;
+
+            if (typeof Chart === 'undefined') return;
+
+            const ctx = ctxElement.getContext('2d');
+            const costLabel = `Custo: ${cost.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`;
+            const taxLabel = `Impostos: ${taxes.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`;
+
+            // Globals
+            if (Chart.defaults && !Chart.defaults.font.family.includes('Inter')) {
+                Chart.defaults.font.family = "'Inter', sans-serif";
+            }
+
+            if (chartInstance) {
+                chartInstance.data.datasets[0].data = [cost, taxes];
+                chartInstance.data.labels = [costLabel, taxLabel];
+                chartInstance.update();
+            } else {
+                chartInstance = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: [costLabel, taxLabel],
+                        datasets: [{
+                            data: [cost, taxes],
+                            backgroundColor: ['#1e293b', '#14b8a6'],
+                            borderWidth: 0,
+                            hoverOffset: 15
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        layout: { padding: 20 },
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    padding: 20,
+                                    font: { size: 14, weight: '700', family: "'Inter', sans-serif" },
+                                    color: '#64748b',
+                                    usePointStyle: true,
+                                    boxWidth: 10
+                                }
+                            },
+                            tooltip: {
+                                bodyFont: { size: 16, weight: 'bold', family: "'Inter', sans-serif" },
+                                padding: 12,
+                                cornerRadius: 8
+                            }
+                        },
+                        cutout: '65%'
+                    }
+                });
+            }
+        }
+
+        // --- INIT ---
+        window.addEventListener('load', function () {
+            const input = document.getElementById('priceInput');
+            if (input && !input.value) input.value = "R$ 100.000,00";
+
+            // Initial calc
+            updateCalculations();
+
+            // Render deputies with brief delay
+            setTimeout(renderDeputados, 100);
+        });
+    </script>
+</body>
+
+</html>
