@@ -772,16 +772,46 @@
         function sendBulkEmail() {
             const emails = Array.from(selectedDeputies);
             if (emails.length === 0) return;
-            if (emails.length > MAX_EMAIL_RECIPIENTS) {
-                alert(`Atenção: Você selecionou ${emails.length} deputados. Alguns navegadores podem bloquear links com muitos destinatários. Recomendamos selecionar no máximo ${MAX_EMAIL_RECIPIENTS} por vez.`);
-            }
 
-            const bcc = emails.join(',');
-            const mailSubject = encodeURIComponent("Apresentação de Projeto - IPVA 1% - Plano de Viabilidade");
-            const mailBody = encodeURIComponent(`Prezados Deputados,\n\nComo cidadão, solicito que analisem e apresentem na Assembleia Legislativa o projeto do IPVA 1%.\n\nO plano de viabilidade técnica pode ser acessado no link: http://ipva1sp.com.br/plano_viabilidade.pdf\n\nContamos com seu apoio.\n\nAtt,\nCidadão Paulista`);
+            // Populate Modal
+            const emailList = document.getElementById('emailListDisplay');
+            const emailBody = document.getElementById('emailBodyDisplay');
 
-            const mailLink = `mailto:?bcc=${bcc}&subject=${mailSubject}&body=${mailBody}`;
-            window.open(mailLink, '_blank');
+            // Logic to split if too many? For now just all.
+            emailList.value = emails.join(', ');
+
+            const messageTemplate = `Prezados Deputados,
+
+Como cidadão, solicito que analisem e apresentem na Assembleia Legislativa o projeto do IPVA 1%.
+
+O plano de viabilidade técnica pode ser acessado no link: http://ipva1sp.com.br/plano_viabilidade.pdf
+
+Acreditamos que a redução da carga tributária trará mais justiça e crescimento para São Paulo.
+
+Contamos com seu apoio.
+
+Att,
+Cidadão Paulista`;
+
+            emailBody.value = messageTemplate;
+
+            // Show Modal
+            const modal = document.getElementById('emailInstructionModal');
+            modal.classList.remove('hidden');
+        }
+
+        function closeEmailModal() {
+            document.getElementById('emailInstructionModal').classList.add('hidden');
+        }
+
+        function copyToClipboard(elementId) {
+            const el = document.getElementById(elementId);
+            el.select();
+            el.setSelectionRange(0, 99999); // Mobile
+            navigator.clipboard.writeText(el.value).then(() => {
+                // Visual Feedback could be added here
+                // alert("Copiado!");
+            });
         }
 
         // Listener Busca
@@ -791,6 +821,76 @@
             });
         }
     </script>
+</body>
+
+
+<!-- Modal de Instrução de Email -->
+<div id="emailInstructionModal" class="fixed inset-0 z-[100] hidden">
+    <!-- Backdrop Blur -->
+    <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-sm transition-opacity" onclick="closeEmailModal()">
+    </div>
+
+    <!-- Modal Content -->
+    <div
+        class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl bg-white rounded-2xl shadow-2xl p-6 md:p-8 transform transition-all scale-100">
+        <div class="flex justify-between items-start mb-6">
+            <div>
+                <h2 class="text-2xl font-black text-slate-900 uppercase">Mobilização Manual</h2>
+                <p class="text-sm text-slate-500 mt-1">Para garantir que sua mensagem chegue e não caia no SPAM, o
+                    envio deve ser feito da <strong>sua própria caixa de e-mail</strong>.</p>
+            </div>
+            <button onclick="closeEmailModal()" class="text-slate-400 hover:text-red-500 transition text-xl p-2"><i
+                    class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <div class="space-y-6">
+            <!-- Passo 1 -->
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-[10px] font-black text-teal-600 uppercase tracking-widest">1. Copie os
+                        Destinatários</span>
+                    <button onclick="copyToClipboard('emailListDisplay')"
+                        class="text-[10px] bg-white border border-slate-200 hover:border-teal-500 text-slate-600 hover:text-teal-600 px-3 py-1 rounded-lg font-bold uppercase transition flex items-center gap-2">
+                        <i class="fa-regular fa-copy"></i> Copiar Lista
+                    </button>
+                </div>
+                <textarea id="emailListDisplay" readonly
+                    class="w-full h-24 bg-white border border-slate-200 rounded-lg p-3 text-xs text-slate-600 font-mono resize-none focus:outline-none focus:border-teal-500 transition"></textarea>
+                <p class="text-[9px] text-slate-400 mt-2 text-right">Cole no campo <strong>"Para"</strong> ou
+                    <strong>"BCC"</strong> do seu e-mail.
+                </p>
+            </div>
+
+            <!-- Passo 2 -->
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-[10px] font-black text-teal-600 uppercase tracking-widest">2. Copie a
+                        Mensagem</span>
+                    <button onclick="copyToClipboard('emailBodyDisplay')"
+                        class="text-[10px] bg-white border border-slate-200 hover:border-teal-500 text-slate-600 hover:text-teal-600 px-3 py-1 rounded-lg font-bold uppercase transition flex items-center gap-2">
+                        <i class="fa-regular fa-copy"></i> Copiar Texto
+                    </button>
+                </div>
+                <div class="relative">
+                    <textarea id="emailBodyDisplay" readonly
+                        class="w-full h-32 bg-white border border-slate-200 rounded-lg p-3 text-xs text-slate-600 resize-none focus:outline-none focus:border-teal-500 transition"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-8 pt-6 border-t border-slate-100 flex justify-end gap-3">
+            <button onclick="closeEmailModal()"
+                class="px-6 py-2.5 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100 transition uppercase tracking-wide">
+                Cancelar
+            </button>
+            <a href="mailto:?subject=Apresentação%20de%20Projeto%20-%20IPVA%201%25%20-%20Plano%20de%20Viabilidade"
+                target="_blank"
+                class="px-6 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-500 text-white text-xs font-black uppercase tracking-wide shadow-lg shadow-teal-500/30 transition flex items-center gap-2">
+                <i class="fa-solid fa-paper-plane"></i> Abrir Meu E-mail
+            </a>
+        </div>
+    </div>
+</div>
 </body>
 
 </html>
