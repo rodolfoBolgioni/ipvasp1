@@ -866,11 +866,17 @@ Cidadão Paulista`;
             }
 
             // Public Counter: Increment Emails
-            fetch('https://api.counterapi.dev/v1/ipva1sp.com.br/emails/up')
-                .then(res => res.json())
-                .then(data => {
+            // Public Counter: Increment Emails
+            // Using no-cors mode to bypass CORS restriction. Response will be opaque.
+            fetch('https://api.counterapi.dev/v1/ipva1sp.com.br/emails/up/', { mode: 'no-cors' })
+                .then(() => {
+                    // Opaque response, so we can't read json. 
+                    // We optimistically increment the UI.
                     const el = document.getElementById('counter-emails');
-                    if (el) el.innerText = data.count.toLocaleString('pt-BR');
+                    if (el && !isNaN(parseInt(el.innerText.replace(/\./g, '')))) {
+                        let current = parseInt(el.innerText.replace(/\./g, ''));
+                        el.innerText = (current + 1).toLocaleString('pt-BR');
+                    }
                 })
                 .catch(err => console.error("Counter Error:", err));
         }
@@ -917,7 +923,7 @@ Cidadão Paulista`;
                 .catch(err => console.error("Visits Error:", err));
 
             // Emails: Read Only (Increment happens on action)
-            fetch('https://api.counterapi.dev/v1/ipva1sp.com.br/emails')
+            fetch('https://api.counterapi.dev/v1/ipva1sp.com.br/emails/')
                 .then(res => res.json())
                 .then(data => {
                     const el = document.getElementById('counter-emails');
