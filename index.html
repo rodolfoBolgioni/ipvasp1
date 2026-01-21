@@ -425,7 +425,43 @@
 
     </main>
 
-    <footer class="bg-white border-t border-slate-200 mt-20 py-10">
+    <!-- Section: Our Impact (Counters) -->
+    <section class="py-16 bg-white border-t border-slate-200">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-black text-slate-800 uppercase tracking-tighter">
+                    Nosso <span class="text-teal-600">Impacto</span>
+                </h2>
+                <p class="text-slate-500 mt-2 max-w-2xl mx-auto">
+                    Acompanhe em tempo real a força da nossa mobilização por um IPVA mais justo.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <!-- Card: Emails Sent -->
+                <div class="bg-slate-50 p-8 rounded-3xl border border-slate-100 shadow-xl flex flex-col items-center">
+                    <div class="bg-teal-100/50 p-4 rounded-full mb-4">
+                        <i class="fa-solid fa-paper-plane text-3xl text-teal-600"></i>
+                    </div>
+                    <span id="counter-emails"
+                        class="text-5xl font-black text-slate-800 tracking-tighter mb-2">...</span>
+                    <span class="text-sm font-bold text-slate-400 uppercase tracking-widest">E-mails Enviados</span>
+                </div>
+
+                <!-- Card: Visits -->
+                <div class="bg-slate-50 p-8 rounded-3xl border border-slate-100 shadow-xl flex flex-col items-center">
+                    <div class="bg-blue-100/50 p-4 rounded-full mb-4">
+                        <i class="fa-solid fa-users text-3xl text-blue-600"></i>
+                    </div>
+                    <span id="counter-visits"
+                        class="text-5xl font-black text-slate-800 tracking-tighter mb-2">...</span>
+                    <span class="text-sm font-bold text-slate-400 uppercase tracking-widest">Acessos ao Site</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-white border-t border-slate-200 mt-0 py-10">
         <div class="max-w-7xl mx-auto px-6 text-center">
             <div class="flex items-center justify-center mb-4">
                 <i class="fa-solid fa-car-side text-teal-600 text-xl mr-2"></i>
@@ -828,6 +864,15 @@ Cidadão Paulista`;
                     'value': 1
                 });
             }
+
+            // Public Counter: Increment Emails
+            fetch('https://api.counterapi.dev/v1/ipva1sp.com.br/emails/up')
+                .then(res => res.json())
+                .then(data => {
+                    const el = document.getElementById('counter-emails');
+                    if (el) el.innerText = data.count.toLocaleString('pt-BR');
+                })
+                .catch(err => console.error("Counter Error:", err));
         }
 
         function closeEmailModal() {
@@ -859,6 +904,31 @@ Cidadão Paulista`;
                 renderDeputados();
             });
         }
+
+        // Init Counters
+        document.addEventListener("DOMContentLoaded", () => {
+            // Visits: Increment on Load
+            fetch('https://api.counterapi.dev/v1/ipva1sp.com.br/visits/up')
+                .then(res => res.json())
+                .then(data => {
+                    const el = document.getElementById('counter-visits');
+                    if (el) el.innerText = data.count.toLocaleString('pt-BR');
+                })
+                .catch(err => console.error("Visits Error:", err));
+
+            // Emails: Read Only (Increment happens on action)
+            fetch('https://api.counterapi.dev/v1/ipva1sp.com.br/emails')
+                .then(res => res.json())
+                .then(data => {
+                    const el = document.getElementById('counter-emails');
+                    if (el) el.innerText = data.count.toLocaleString('pt-BR');
+                })
+                .catch(err => {
+                    // If key doesn't exist yet (first run), default to 0
+                    const el = document.getElementById('counter-emails');
+                    if (el) el.innerText = "0";
+                });
+        });
     </script>
 </body>
 
