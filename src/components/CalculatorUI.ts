@@ -1,4 +1,4 @@
-import { CalculatorService, CalculatorResult } from '../services/Calculator';
+import { CalculatorService } from '../services/Calculator';
 import Chart from 'chart.js/auto';
 
 export class CalculatorUI {
@@ -282,7 +282,7 @@ export class CalculatorUI {
                                 label: function (context) {
                                     let label = context.label || '';
                                     if (label) label += ': ';
-                                    label += context.raw?.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                                    label += (context.raw as number).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
                                     return label;
                                 }
                             }
