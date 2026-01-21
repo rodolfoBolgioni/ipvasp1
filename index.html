@@ -5,6 +5,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plano SP 2027: Liberdade para o Cidadão que Produz</title>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-36WXZHT8N4"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-36WXZHT8N4');
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
@@ -810,6 +819,15 @@ Cidadão Paulista`;
             // Show Modal
             const modal = document.getElementById('emailInstructionModal');
             modal.classList.remove('hidden');
+
+            // Track Event: Open Modal / "Email Click"
+            if (typeof gtag === 'function') {
+                gtag('event', 'begin_checkout', {
+                    'event_category': 'Engagement',
+                    'event_label': 'Open Email Modal',
+                    'value': 1
+                });
+            }
         }
 
         function closeEmailModal() {
@@ -822,7 +840,16 @@ Cidadão Paulista`;
             el.setSelectionRange(0, 99999); // Mobile
             navigator.clipboard.writeText(el.value).then(() => {
                 // Visual Feedback could be added here
-                // alert("Copiado!");
+                alert("E-mails copiados! Agora cole no campo 'Para' ou 'Cco' do seu e-mail.");
+
+                // Track Event: Copy Emails
+                if (typeof gtag === 'function') {
+                    gtag('event', 'share', {
+                        'event_category': 'Engagement',
+                        'event_label': 'Copy Emails',
+                        'value': 1
+                    });
+                }
             });
         }
 
