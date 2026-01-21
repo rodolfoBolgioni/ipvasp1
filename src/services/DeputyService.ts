@@ -1,4 +1,6 @@
-const deputados = [
+import { Deputy } from '../core/types';
+
+const INITIAL_DEPUTIES: Deputy[] = [
     { name: "Agente Federal Danilo Balas", party: "PL", room: "255", phone: "3886-6054/6052", email: "apfdanilobalas@al.sp.gov.br" },
     { name: "Alex Madureira", party: "PL", room: "173", phone: "(11) 3886-6676/ 6677", email: "alexdemadureira@al.sp.gov.br" },
     { name: "Altair Moraes", party: "REPUBLICANOS", room: "T. 53", phone: "(11) 3886-6468/ 6476", email: "altairmoraes@al.sp.gov.br" },
@@ -94,3 +96,32 @@ const deputados = [
     { name: "Valeria Bolsonaro", party: "PL", room: "T. 06", phone: "(011)3886-6222 / 6223", email: "ValeriaBolsonaro@al.sp.gov.br" },
     { name: "Vitão do Cachorrão", party: "REPUBLICANOS", room: "T55", phone: "(11) 3886-6864/ 6865", email: "vitaodocachorrao@al.sp.gov.br" },
 ];
+
+export class DeputyService {
+    private deputies: Deputy[];
+
+    constructor(initialData: Deputy[] = INITIAL_DEPUTIES) {
+        this.deputies = initialData;
+        this.sortDeputies();
+    }
+
+    private sortDeputies() {
+        this.deputies.sort((a, b) => a.name.localeCompare(b.name));
+    }
+
+    getAll(): Deputy[] {
+        return this.deputies;
+    }
+
+    search(query: string): Deputy[] {
+        const normalizedQuery = this.normalizeString(query);
+        return this.deputies.filter(deputy => {
+            return this.normalizeString(deputy.name).includes(normalizedQuery) ||
+                this.normalizeString(deputy.party).includes(normalizedQuery);
+        });
+    }
+
+    private normalizeString(str: string): string {
+        return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    }
+}

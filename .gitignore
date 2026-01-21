@@ -1,6 +1,27 @@
+# Helper scripts and environment
 env/
 .vscode/sftp.json
 upload_script.txt
 *.log
+
+# Dependencies
 node_modules/
+.pnpm-store
+
+# Production Build
+dist/
+dist-ssr/
+*.local
+
+# Testing
+coverage/
+
+# Misc
 .DS_Store
+.env
+.idea/
+*.suo
+*.ntvs
+*.njsproj
+*.sln
+*.sw?
