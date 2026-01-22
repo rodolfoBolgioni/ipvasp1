@@ -1,0 +1,51 @@
+name: Deploy to Locaweb
+
+on:
+  push:
+    branches: [master]
+  schedule:
+    - cron: "0 8 * * 1" # Toda segunda-feira às 08:00
+  workflow_dispatch: # Permite rodar manualmente pelo site do GitHub
+
+jobs:
+  web-deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Permissão para commitar o JSON atualizado de volta
+
+    steps:
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🔄 Update Deputy Data (ETL)
+        id: etl
+        run: npx ts-node scripts/update-deputies.ts
+
+      - name: 💾 Commit updated data (if changed)
+        run: |
+          git config user.name "GitHub Action"
+          git config user.email "action@github.com"
+          git add src/data/deputies.json
+          # Só commita se houver mudança
+          git diff --staged --quiet || (git commit -m "chore: auto-update deputy list [skip ci]" && git push)
+
+      - name: 🏗️ Build Project
+        run: npm run build
+
+      - name: 🚀 FTP Deploy
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.IPVA_FTP_HOST }}
+          username: ${{ secrets.IPVA_FTP_USER }}
+          password: ${{ secrets.IPVA_FTP_PASSWORD }}
+          local-dir: ./dist/
+          server-dir: /public_html/
