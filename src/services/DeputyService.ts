@@ -121,6 +121,15 @@ export class DeputyService {
         });
     }
 
+    getPartyStats(): Record<string, number> {
+        const stats: Record<string, number> = {};
+        this.deputies.forEach(dep => {
+            const party = dep.party.toUpperCase();
+            stats[party] = (stats[party] || 0) + 1;
+        });
+        return stats;
+    }
+
     private normalizeString(str: string): string {
         return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     }

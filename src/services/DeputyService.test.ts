@@ -37,4 +37,15 @@ describe('DeputyService', () => {
         const results = serviceWithAccents.search("joao");
         expect(results.length).toBe(1);
     });
+    it('should calculate party stats', () => {
+        const stats = service.getPartyStats();
+        // MOCK_DEPUTIES: Zebra(PL), Alpha(PL), Beta(PL) -> wait, let's check mock data
+        // Zebra: Party A
+        // Alpha: Party B
+        // Beta: Party A
+        // Total: A: 2, B: 1
+        expect(stats["A"]).toBe(2);
+        expect(stats["B"]).toBe(1);
+    });
 });
+

@@ -1,30 +1,43 @@
+
 import { DeputyService } from '../services/DeputyService';
 import { AnalyticsService } from '../services/AnalyticsService';
 import { Modal } from './Modal';
+import { PartyChart } from './PartyChart';
 
 export class DeputiesList {
     private service: DeputyService;
     private analytics: AnalyticsService;
     private modal: Modal;
+    private partyChart: PartyChart;
     private containerId = 'deputies-container';
+    private chartContainerId = 'party-chart-canvas';
 
     // State
     private selectedDeputies: Set<string> = new Set();
     private currentQuery: string = '';
+    private selectedParty: string | null = null;
 
     constructor(modal: Modal) {
         this.service = new DeputyService();
         this.analytics = new AnalyticsService();
         this.modal = modal;
+        this.partyChart = new PartyChart(this.chartContainerId, (party) => this.handlePartySelect(party));
     }
 
     render(): string {
+        const totalDeputies = this.service.getAll().length;
+
         return `
         <section class="py-12 bg-slate-900 text-white relative overflow-hidden p-6 md:p-8" id="deputados">
             <div class="container mx-auto px-4 relative z-10">
                  <div class="flex flex-col md:flex-row justify-between items-end mb-6 gap-4">
                     <div>
-                        <h2 class="text-2xl font-black uppercase mb-2">Assembleia Legislativa</h2>
+                        <div class="flex items-center gap-3 mb-2">
+                           <h2 class="text-2xl font-black uppercase">Assembleia Legislativa - São Paulo</h2>
+                           <span class="bg-teal-500/20 text-teal-300 text-xs font-bold px-2 py-1 rounded-full border border-teal-500/30">
+                                ${totalDeputies} Deputados
+                           </span>
+                        </div>
                         <p class="text-slate-400 text-sm max-w-lg leading-relaxed">
                             Pressione seu representante! Envie um e-mail cobrando o <strong>IPVA 1%</strong>.
                         </p>
@@ -40,6 +53,19 @@ export class DeputiesList {
                          <button id="btnSelectAll" class="text-[10px] text-teal-400 font-bold hover:text-teal-300 transition uppercase tracking-wider">
                             <i class="fas fa-check-double mr-1"></i> Selecionar Todos
                         </button>
+                    </div>
+                </div>
+
+                <!-- Party Chart -->
+                <div class="mb-8">
+                    <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">Distribuição por Partido</h3>
+                    <div class="bg-slate-800/50 rounded-xl p-4 border border-white/5 h-64 relative">
+                        <canvas id="${this.chartContainerId}"></canvas>
+                        ${this.selectedParty ? `
+                        <button id="clearPartyFilter" class="absolute top-2 right-2 text-[10px] bg-red-500/20 text-red-400 hover:bg-red-500/30 px-3 py-1 rounded-full uppercase font-bold tracking-wider transition">
+                            <i class="fas fa-times mr-1"></i> Remover filtro: ${this.selectedParty}
+                        </button>
+                        ` : ''}
                     </div>
                 </div>
 
@@ -84,6 +110,14 @@ export class DeputiesList {
         // Bulk Send
         document.getElementById('btnBulkSend')?.addEventListener('click', () => this.handleBulkSend());
 
+        // Clear Party Filter (delegated since it's dynamic)
+        document.addEventListener('click', (e) => {
+            const target = e.target as HTMLElement;
+            if (target && target.closest('#clearPartyFilter')) {
+                this.handlePartySelect(null);
+            }
+        });
+
         // Initial Render
         this.renderList();
     }
@@ -92,7 +126,12 @@ export class DeputiesList {
         const container = document.getElementById(this.containerId);
         if (!container) return;
 
-        const deputies = this.service.search(this.currentQuery);
+        let deputies = this.service.search(this.currentQuery);
+
+        // Filter by party
+        if (this.selectedParty) {
+            deputies = deputies.filter(d => d.party.toUpperCase() === this.selectedParty);
+        }
 
         if (deputies.length === 0) {
             container.innerHTML = '<div class="col-span-full text-center p-10 text-slate-500">Nenhum deputado encontrado.</div>';
@@ -130,6 +169,60 @@ export class DeputiesList {
         });
 
         this.updateActionBar();
+        this.updateChart();
+    }
+
+    private updateChart() {
+        const stats = this.service.getPartyStats();
+        // Maybe we want to filter the chart based on search too? 
+        // For now, let's keep the chart showing global distribution to allow filtering from it.
+        // OR we can make it reactive to the search query (showing distribution of search results).
+        // Let's stick to global distribution for now as it acts as a primary filter.
+
+        this.partyChart.render(stats, this.selectedParty);
+    }
+
+    private handlePartySelect(party: string | null) {
+        this.selectedParty = party;
+        this.render(); // Re-render the whole component to update the "Clear Filter" button and the list
+        this.attachEvents(); // Re-attach events since we replaced HTML
+
+        // Restore focus if needed or just keep it simple.
+        // Replacing innerHTML of the whole section might be too heavy and reset scroll.
+        // Better to just update parts?
+        // The render() method returns string, but currently I don't have a method to just update the chart container HTML.
+        // Let's improve renderList to also update the Chart Container HTML if needed?
+        // Actually, the simplest way is to re-render the list and update the Chart.
+
+        // Wait, 'render()' creates the implementation string but doesn't inject it.
+        // The caller of 'render()' usually injects it.
+        // But here I am inside the class. 
+        // I need a way to re-render the chart section or the specific button.
+
+        // Let's look at how the app is structured. usually 'render()' is called once by the main app.
+        // Here I need to modify the DOM directly like in renderList.
+
+        this.updateChartUI();
+        this.renderList();
+    }
+
+    private updateChartUI() {
+        const container = document.getElementById(this.chartContainerId)?.parentElement;
+        if (!container) return;
+
+        // Re-render just the button part? Or just toggle visibility
+        const existingBtn = document.getElementById('clearPartyFilter');
+        if (this.selectedParty && !existingBtn) {
+            const btn = document.createElement('button');
+            btn.id = 'clearPartyFilter';
+            btn.className = 'absolute top-2 right-2 text-[10px] bg-red-500/20 text-red-400 hover:bg-red-500/30 px-3 py-1 rounded-full uppercase font-bold tracking-wider transition';
+            btn.innerHTML = `<i class="fas fa-times mr-1"></i> Remover filtro: ${this.selectedParty}`;
+            container.appendChild(btn);
+        } else if (!this.selectedParty && existingBtn) {
+            existingBtn.remove();
+        }
+
+        this.updateChart();
     }
 
     private toggleSelection(email: string) {
