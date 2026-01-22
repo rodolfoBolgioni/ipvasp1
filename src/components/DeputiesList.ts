@@ -1,4 +1,3 @@
-
 import { DeputyService } from '../services/DeputyService';
 import { AnalyticsService } from '../services/AnalyticsService';
 import { Modal } from './Modal';
@@ -26,6 +25,7 @@ export class DeputiesList {
 
     render(): string {
         const totalDeputies = this.service.getAll().length;
+        const lastUpdated = new Date(this.service.getLastUpdated()).toLocaleDateString('pt-BR');
 
         return `
         <section class="py-12 bg-slate-900 text-white relative overflow-hidden p-6 md:p-8" id="deputados">
@@ -70,16 +70,17 @@ export class DeputiesList {
                 </div>
 
                  <!-- List -->
-                <div id="${this.containerId}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pb-20 max-h-[70vh] overflow-y-auto custom-scrollbar">
+                <div id="${this.containerId}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pb-12 max-h-[70vh] overflow-y-auto custom-scrollbar">
                     <!-- Cards injected here -->
                 </div>
                 
-                 <!-- Link External -->
-                <div class="mt-4 text-center">
+                 <!-- Footer Info -->
+                <div class="mt-6 flex flex-col items-center gap-2">
                     <a href="https://www.al.sp.gov.br/deputado/contato/" target="_blank"
                         class="text-[10px] text-slate-500 hover:text-teal-600 uppercase font-bold tracking-widest transition flex items-center justify-center gap-2">
                         <i class="fas fa-external-link-alt"></i> Conferir Lista Oficial ALESP
                     </a>
+                    <span class="text-[9px] text-slate-600">Dados atualizados em: ${lastUpdated}</span>
                 </div>
 
                 <!-- Sticky Bulk Action Bar -->
@@ -116,6 +117,17 @@ export class DeputiesList {
             if (target && target.closest('#clearPartyFilter')) {
                 this.handlePartySelect(null);
             }
+
+            // Expand More logic
+            if (target && target.classList.contains('read-more-btn')) {
+                const container = target.parentElement;
+                if (container) {
+                    const fullText = container.getAttribute('data-full-text');
+                    if (fullText) {
+                        container.innerHTML = fullText;
+                    }
+                }
+            }
         });
 
         // Initial Render
@@ -142,29 +154,47 @@ export class DeputiesList {
 
         deputies.forEach(dep => {
             const isSelected = this.selectedDeputies.has(dep.email);
+            const photoUrl = dep.photo || 'https://www.al.sp.gov.br/repositorio/deputado/foto/default.jpg';
 
             const card = document.createElement('div');
-            card.className = `p-4 rounded-xl border transition-all cursor-pointer relative group ${isSelected ? 'bg-teal-900/40 border-teal-500' : 'bg-white/5 border-white/10 hover:border-teal-500/50'
-                }`;
+            card.className = `p-4 rounded-xl border transition-all cursor-pointer relative group flex gap-4 ${isSelected ? 'bg-teal-900/40 border-teal-500' : 'bg-white/5 border-white/10 hover:border-teal-500/50'}`;
 
             card.innerHTML = `
-                <div class="flex items-start justify-between mb-2">
-                    <div>
-                        <span class="text-[9px] font-bold text-teal-400 uppercase tracking-wider">${dep.party}</span>
-                        <h3 class="font-bold text-white leading-tight">${dep.name}</h3>
-                    </div>
-                    <div class="w-5 h-5 rounded-full border border-white/20 flex items-center justify-center ${isSelected ? 'bg-teal-500 border-teal-500' : ''}">
-                         ${isSelected ? '<i class="fas fa-check text-[10px] text-white"></i>' : ''}
-                    </div>
+                <!-- Photo -->
+                <div class="flex-shrink-0">
+                    <img src="${photoUrl}" alt="${dep.name}" class="w-16 h-16 rounded-full object-cover border-2 ${isSelected ? 'border-teal-500' : 'border-slate-700'}">
                 </div>
-                <div class="space-y-1 text-xs text-slate-400 mb-3">
-                    <div class="flex items-center gap-2"><i class="fas fa-door-open w-4 opacity-50"></i> Gabinete ${dep.room}</div>
-                    <div class="flex items-center gap-2"><i class="fas fa-phone w-4 opacity-50"></i> ${dep.phone}</div>
-                    <div class="flex items-center gap-2 overflow-hidden" title="${dep.email}"><i class="fas fa-envelope w-4 opacity-50"></i> <span class="truncate">${dep.email}</span></div>
+
+                <!-- Content -->
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-start justify-between mb-1">
+                        <div>
+                            <span class="text-[9px] font-bold text-teal-400 uppercase tracking-wider">${dep.party}</span>
+                            <h3 class="font-bold text-white leading-tight text-sm">${dep.name}</h3>
+                        </div>
+                        <div class="w-5 h-5 rounded-full border border-white/20 flex items-center justify-center ${isSelected ? 'bg-teal-500 border-teal-500' : ''}">
+                             ${isSelected ? '<i class="fas fa-check text-[10px] text-white"></i>' : ''}
+                        </div>
+                    </div>
+
+                    <div class="space-y-1 text-xs text-slate-400">
+                        <div class="flex items-center gap-2"><i class="fas fa-door-open w-3 opacity-50"></i> Gabinete ${dep.room}</div>
+                        <div class="flex items-center gap-2"><i class="fas fa-phone w-3 opacity-50"></i> ${dep.phone}</div>
+                        
+                        <!-- Area of Activity with Truncation -->
+                        ${this.renderTruncatedField('fa-star', dep.areasOfActivity, 'Área de Atuação')}
+                        
+                        <!-- Electoral Base -->
+                        ${this.renderTruncatedField('fa-map-marker-alt', dep.electoralBase, 'Base Eleitoral')}
+                    </div>
                 </div>
             `;
 
-            card.onclick = () => this.toggleSelection(dep.email);
+            card.onclick = (e) => {
+                // Prevent selection when clicking "read more"
+                if ((e.target as HTMLElement).classList.contains('read-more-btn')) return;
+                this.toggleSelection(dep.email);
+            };
             container.appendChild(card);
         });
 
@@ -172,36 +202,33 @@ export class DeputiesList {
         this.updateChart();
     }
 
+    private renderTruncatedField(icon: string, text: string | undefined, label: string): string {
+        if (!text) return '';
+
+        const limit = 60;
+        const isLong = text.length > limit;
+        const displayText = isLong ? text.substring(0, limit) + '...' : text;
+
+        return `
+            <div class="flex gap-2 items-start" title="${label}: ${text}">
+                <i class="fas ${icon} w-3 mt-0.5 opacity-50 flex-shrink-0"></i> 
+                <span class="leading-tight" data-full-text="${text}">
+                    ${displayText}
+                    ${isLong ? '<span class="text-teal-500 hover:text-teal-400 cursor-pointer text-[10px] font-bold uppercase ml-1 read-more-btn">Ver mais</span>' : ''}
+                </span>
+            </div>
+        `;
+    }
+
     private updateChart() {
         const stats = this.service.getPartyStats();
-        // Maybe we want to filter the chart based on search too? 
-        // For now, let's keep the chart showing global distribution to allow filtering from it.
-        // OR we can make it reactive to the search query (showing distribution of search results).
-        // Let's stick to global distribution for now as it acts as a primary filter.
-
         this.partyChart.render(stats, this.selectedParty);
     }
 
     private handlePartySelect(party: string | null) {
         this.selectedParty = party;
-        this.render(); // Re-render the whole component to update the "Clear Filter" button and the list
-        this.attachEvents(); // Re-attach events since we replaced HTML
-
-        // Restore focus if needed or just keep it simple.
-        // Replacing innerHTML of the whole section might be too heavy and reset scroll.
-        // Better to just update parts?
-        // The render() method returns string, but currently I don't have a method to just update the chart container HTML.
-        // Let's improve renderList to also update the Chart Container HTML if needed?
-        // Actually, the simplest way is to re-render the list and update the Chart.
-
-        // Wait, 'render()' creates the implementation string but doesn't inject it.
-        // The caller of 'render()' usually injects it.
-        // But here I am inside the class. 
-        // I need a way to re-render the chart section or the specific button.
-
-        // Let's look at how the app is structured. usually 'render()' is called once by the main app.
-        // Here I need to modify the DOM directly like in renderList.
-
+        this.render();
+        this.attachEvents();
         this.updateChartUI();
         this.renderList();
     }
@@ -210,7 +237,6 @@ export class DeputiesList {
         const container = document.getElementById(this.chartContainerId)?.parentElement;
         if (!container) return;
 
-        // Re-render just the button part? Or just toggle visibility
         const existingBtn = document.getElementById('clearPartyFilter');
         if (this.selectedParty && !existingBtn) {
             const btn = document.createElement('button');
@@ -236,7 +262,6 @@ export class DeputiesList {
 
     private toggleSelectAll() {
         const matching = this.service.search(this.currentQuery);
-        // If all matching are selected, deselect all. Otherwise, select all.
         const allSelected = matching.every(d => this.selectedDeputies.has(d.email));
 
         if (allSelected) {

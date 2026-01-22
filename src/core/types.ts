@@ -4,6 +4,9 @@ export interface Deputy {
     room: string;
     phone: string;
     email: string;
+    photo?: string;
+    areasOfActivity?: string;
+    electoralBase?: string;
     site?: string;
     instagram?: string;
     facebook?: string;
