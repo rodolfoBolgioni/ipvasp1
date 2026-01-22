@@ -263,7 +263,7 @@ export class DeputiesList {
 
     private handleBulkSend() {
         const emails = Array.from(this.selectedDeputies);
-        const message = `Prezados Deputados,\n\nComo cidadão, solicito que analisem e apoiem o projeto do IPVA 1%.\n\nA proposta visa reduzir a carga tributária e trazer mais liberdade econômica.\nVer mais em: http://ipva1sp.com.br`;
+        const message = `Prezados Deputados,\n\nComo cidadão, solicito que analisem e apoiem o projeto do IPVA 1%.\n\nA proposta visa reduzir a carga tributária e trazer mais liberdade econômica.\nVer mais em: https://ipva1sp.com.br`;
 
         this.modal.open(emails, message);
 

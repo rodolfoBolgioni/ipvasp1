@@ -71,7 +71,14 @@ export class Modal {
                                 <span class="flex items-center justify-center w-6 h-6 rounded-full bg-slate-100 text-xs">3</span>
                                 Abra seu e-mail e envie
                             </div>
-                            <p class="text-sm text-slate-500">Abra seu aplicativo de e-mail (Gmail, Outlook, etc), cole os e-mails no campo <strong>Para</strong> (ou Cco) e o texto no corpo da mensagem.</p>
+                            <!-- Dynamic Buttons Container -->
+                            <div id="emailActionButtons" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <!-- Injected via TS -->
+                            </div>
+                            
+                            <p class="text-xs text-slate-400 text-center mt-2">
+                                Se os botões acima não abrirem seu app, utilize a cópia manual acima.
+                            </p>
                         </div>
                     </div>
 
@@ -111,15 +118,100 @@ export class Modal {
         copyBodyBtn?.addEventListener('click', () => this.copyToClipboard('emailBodyDisplay'));
     }
 
+    private currentEmails: string[] = [];
+    private currentMessage: string = '';
+
     open(emails: string[], message: string) {
+        this.currentEmails = emails;
+        this.currentMessage = message;
+
         const modal = document.getElementById('emailInstructionModal');
         const emailList = document.getElementById('emailListDisplay') as HTMLTextAreaElement;
         const emailBody = document.getElementById('emailBodyDisplay') as HTMLTextAreaElement;
 
+        // Display full list and message for copy/paste backup
         if (emailList) emailList.value = emails.join(', ');
         if (emailBody) emailBody.value = message;
 
+        this.renderActionButtons();
+
         modal?.classList.remove('hidden');
+    }
+
+    private renderActionButtons() {
+        const container = document.getElementById('emailActionButtons');
+        if (!container) return;
+
+        container.innerHTML = '';
+
+        // Calculate mailto length
+        const baseMailto = `mailto:?subject=Apoio ao IPVA 1%&body=${encodeURIComponent(this.currentMessage)}`;
+        // Browser URL limit safe margin (approx 2000 total, leaving ~1800 for emails)
+        const SAFE_LIMIT = 1800;
+
+        const fullEmailString = this.currentEmails.join(',');
+        const fullLink = `mailto:${fullEmailString}?subject=Apoio ao IPVA 1%&body=${encodeURIComponent(this.currentMessage)}`;
+
+        if (fullLink.length < SAFE_LIMIT) {
+            // Fits in one batch
+            const btn = this.createActionButton('Abrir App de E-mail', fullLink, 'bg-teal-500 hover:bg-teal-400 text-slate-900');
+            container.appendChild(btn);
+        } else {
+            // Needs split
+            const batches = this.splitEmails(this.currentEmails, SAFE_LIMIT - baseMailto.length);
+
+            // Info Message
+            const info = document.createElement('div');
+            info.className = 'col-span-full text-xs text-amber-600 mb-2 font-bold';
+            info.innerHTML = `<i class="fas fa-exclamation-circle"></i> Muitos destinatários! Dividimos o envio em ${batches.length} partes para não travar seu e-mail.`;
+            container.appendChild(info);
+
+            batches.forEach((batch, index) => {
+                const link = `mailto:${batch.join(',')}?subject=Apoio ao IPVA 1% (Parte ${index + 1})&body=${encodeURIComponent(this.currentMessage)}`;
+                const btn = this.createActionButton(`Enviar Parte ${index + 1}`, link, 'bg-blue-500 hover:bg-blue-400 text-white');
+                container.appendChild(btn);
+            });
+        }
+    }
+
+    private createActionButton(text: string, link: string, classes: string): HTMLAnchorElement {
+        const a = document.createElement('a');
+        a.href = link;
+        // target blank usually doesn't work well with mailto but let's try to not disrupt current page
+        // actually self is better for mailto to trigger app
+        a.className = `block w-full text-center py-3 rounded-xl font-bold uppercase tracking-wider text-xs shadow-lg transition-transform hover:scale-[1.02] active:scale-95 ${classes}`;
+        a.innerHTML = `<i class="fas fa-envelope-open-text mr-2"></i> ${text}`;
+        return a;
+    }
+
+    private splitEmails(emails: string[], maxChars: number): string[][] {
+        const batches: string[][] = [];
+        let currentBatch: string[] = [];
+        let currentChars = 0;
+
+        for (const email of emails) {
+            // +1 for comma
+            if (currentChars + email.length + 1 > maxChars && currentBatch.length > 0) {
+                batches.push(currentBatch);
+                currentBatch = [];
+                currentChars = 0;
+            }
+            currentBatch.push(email);
+            currentChars += email.length + 1;
+        }
+        if (currentBatch.length > 0) batches.push(currentBatch);
+
+        // Ensure at least 2 batches if logic pushed for split but loop logic didn't (edge case),
+        // but here we only call this if full link > limit, so it naturally splits.
+        // However, user asked "Tem que fazer duas vezes". Let's force at least 2 batches if we are in this block.
+        // The simplistic split above works based on size.
+
+        // Check if user specifically requested "Two Times" essentially (50/50 split) if it's large?
+        // The validation requested is "character count constraint requiring doing it twice".
+        // My chunking logic handles N times. If it's huge, it might be 3 times.
+        // If it barely exceeds, it will be 2 times. This meets requirements.
+
+        return batches;
     }
 
     private copyToClipboard(elementId: string) {
