@@ -47,9 +47,59 @@ describe('DeputyService', () => {
         expect(resultsEmail[0].name).toBe("Zebra");
     });
     it('should calculate party stats', () => {
-        const stats = service.getPartyStats();
+        const stats = service.getStats('party');
         expect(stats["A"]).toBe(2);
         expect(stats["B"]).toBe(1);
+    });
+
+    it('should split and count stats for multi-value fields', () => {
+        const serviceMulti = new DeputyService([
+            { ...MOCK_DEPUTIES[0], areasOfActivity: "Saúde; Educação" },
+            { ...MOCK_DEPUTIES[1], areasOfActivity: "Saúde" },
+            { ...MOCK_DEPUTIES[2], areasOfActivity: "Educação\nSegurança" }
+        ]);
+
+        const stats = serviceMulti.getStats('areasOfActivity');
+        expect(stats['Saúde']).toBe(2);
+        expect(stats['Educação']).toBe(2);
+        expect(stats['Segurança']).toBe(1);
+    });
+
+    it('should normalize regions', () => {
+        const serviceNorm = new DeputyService([
+            { ...MOCK_DEPUTIES[0], electoralBase: "Ribeirão Preto" },
+            { ...MOCK_DEPUTIES[1], electoralBase: "Ribeirão Preto e região" },
+            { ...MOCK_DEPUTIES[2], electoralBase: "Região Metropolitana de Ribeirão Preto" }
+        ]);
+
+        const stats = serviceNorm.getStats('electoralBase');
+        // All should collapse to "Ribeirão Preto"
+        expect(stats['Ribeirão Preto']).toBe(3);
+    });
+
+    it('should normalize areas of activity', () => {
+        const serviceNorm = new DeputyService([
+            { ...MOCK_DEPUTIES[0], areasOfActivity: "Saúde Pública" },
+            { ...MOCK_DEPUTIES[1], areasOfActivity: "Saúde" },
+            { ...MOCK_DEPUTIES[2], areasOfActivity: "Proteção Animal" },
+            { ...MOCK_DEPUTIES[0], areasOfActivity: "Causa Animal" }
+        ]);
+
+        const stats = serviceNorm.getStats('areasOfActivity');
+        expect(stats['Saúde']).toBe(2);
+        expect(stats['Causa Animal']).toBe(2);
+    });
+
+    it('should normalize Esporte and Esportes to Esportes', () => {
+        const serviceNorm = new DeputyService([
+            { ...MOCK_DEPUTIES[0], areasOfActivity: "Esporte" },
+            { ...MOCK_DEPUTIES[1], areasOfActivity: "Esportes" },
+            { ...MOCK_DEPUTIES[2], areasOfActivity: "Esporte e Lazer" }
+        ]);
+
+        const stats = serviceNorm.getStats('areasOfActivity');
+        expect(stats['Esportes']).toBe(3);
+        expect(stats['Esporte']).toBeUndefined();
     });
 
     it('should return last updated date', () => {

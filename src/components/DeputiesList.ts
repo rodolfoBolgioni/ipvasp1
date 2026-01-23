@@ -1,26 +1,34 @@
 import { DeputyService } from '../services/DeputyService';
 import { AnalyticsService } from '../services/AnalyticsService';
 import { Modal } from './Modal';
-import { PartyChart } from './PartyChart';
+import { GenericChart } from './GenericChart';
 
 export class DeputiesList {
     private service: DeputyService;
     private analytics: AnalyticsService;
     private modal: Modal;
-    private partyChart: PartyChart;
+
+    // Charts
+    private partyChart: GenericChart;
+    private areaChart: GenericChart;
+    private regionChart: GenericChart;
+
     private containerId = 'deputies-container';
-    private chartContainerId = 'party-chart-canvas';
 
     // State
     private selectedDeputies: Set<string> = new Set();
     private currentQuery: string = '';
     private selectedParty: string | null = null;
+    private selectedArea: string | null = null;
+    private selectedRegion: string | null = null;
 
     constructor(modal: Modal) {
         this.service = new DeputyService();
         this.analytics = new AnalyticsService();
         this.modal = modal;
-        this.partyChart = new PartyChart(this.chartContainerId, (party) => this.handlePartySelect(party));
+        this.partyChart = new GenericChart('chart-party', (l) => this.handlePartySelect(l));
+        this.areaChart = new GenericChart('chart-area', (l) => this.handleAreaSelect(l));
+        this.regionChart = new GenericChart('chart-region', (l) => this.handleRegionSelect(l));
     }
 
     render(): string {
@@ -56,16 +64,33 @@ export class DeputiesList {
                     </div>
                 </div>
 
-                <!-- Party Chart -->
-                <div class="mb-8">
-                    <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">Distribuição por Partido</h3>
-                    <div class="bg-slate-800/50 rounded-xl p-4 border border-white/5 h-64 relative">
-                        <canvas id="${this.chartContainerId}"></canvas>
-                        ${this.selectedParty ? `
-                        <button id="clearPartyFilter" class="absolute top-2 right-2 text-[10px] bg-red-500/20 text-red-400 hover:bg-red-500/30 px-3 py-1 rounded-full uppercase font-bold tracking-wider transition">
-                            <i class="fas fa-times mr-1"></i> Remover filtro: ${this.selectedParty}
-                        </button>
-                        ` : ''}
+                <!-- Charts Section -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                    <!-- Party Chart -->
+                    <div class="bg-slate-800/50 rounded-xl p-4 border border-white/5 relative flex flex-col">
+                         <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Partidos</h3>
+                         <div class="flex-1 min-h-[300px]">
+                            <canvas id="chart-party"></canvas>
+                         </div>
+                         ${this.selectedParty ? this.renderClearFilter('Partidos', () => this.handlePartySelect(null)) : ''}
+                    </div>
+
+                    <!-- Area Chart -->
+                    <div class="bg-slate-800/50 rounded-xl p-4 border border-white/5 relative flex flex-col">
+                         <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Áreas de Atuação (Top 15)</h3>
+                         <div class="flex-1 min-h-[300px]">
+                            <canvas id="chart-area"></canvas>
+                         </div>
+                          ${this.selectedArea ? this.renderClearFilter('Áreas', () => this.handleAreaSelect(null)) : ''}
+                    </div>
+
+                    <!-- Region Chart -->
+                    <div class="bg-slate-800/50 rounded-xl p-4 border border-white/5 relative flex flex-col">
+                         <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Regiões</h3>
+                         <div class="flex-1 min-h-[300px]">
+                            <canvas id="chart-region"></canvas>
+                         </div>
+                          ${this.selectedRegion ? this.renderClearFilter('Regiões', () => this.handleRegionSelect(null)) : ''}
                     </div>
                 </div>
 
@@ -76,7 +101,7 @@ export class DeputiesList {
                 
                  <!-- Footer Info -->
                 <div class="mt-6 flex flex-col items-center gap-2">
-                    <a href="https://www.al.sp.gov.br/deputado/contato/" target="_blank"
+                    <a href="https://www.al.sp.gov.br/deputado/lista/" target="_blank"
                         class="text-[10px] text-slate-500 hover:text-teal-600 uppercase font-bold tracking-widest transition flex items-center justify-center gap-2">
                         <i class="fas fa-external-link-alt"></i> Conferir Lista Oficial ALESP
                     </a>
@@ -114,8 +139,13 @@ export class DeputiesList {
         // Clear Party Filter (delegated since it's dynamic)
         document.addEventListener('click', (e) => {
             const target = e.target as HTMLElement;
-            if (target && target.closest('#clearPartyFilter')) {
-                this.handlePartySelect(null);
+            const clearBtn = target.closest('[data-clear-filter]') as HTMLElement;
+
+            if (clearBtn) {
+                const label = clearBtn.getAttribute('data-clear-filter');
+                if (label === 'Partidos') this.handlePartySelect(null);
+                if (label === 'Áreas') this.handleAreaSelect(null);
+                if (label === 'Regiões') this.handleRegionSelect(null);
             }
 
             // Expand More logic
@@ -143,6 +173,20 @@ export class DeputiesList {
         // Filter by party
         if (this.selectedParty) {
             deputies = deputies.filter(d => d.party.toUpperCase() === this.selectedParty);
+        }
+
+        // Filter by area
+        if (this.selectedArea) {
+            deputies = deputies.filter(d => {
+                return d.areasOfActivity && d.areasOfActivity.includes(this.selectedArea!);
+            });
+        }
+
+        // Filter by region
+        if (this.selectedRegion) {
+            deputies = deputies.filter(d => {
+                return d.electoralBase && d.electoralBase.includes(this.selectedRegion!);
+            });
         }
 
         if (deputies.length === 0) {
@@ -199,7 +243,7 @@ export class DeputiesList {
         });
 
         this.updateActionBar();
-        this.updateChart();
+        this.updateCharts();
     }
 
     private renderTruncatedField(icon: string, text: string | undefined, label: string): string {
@@ -220,35 +264,44 @@ export class DeputiesList {
         `;
     }
 
-    private updateChart() {
-        const stats = this.service.getPartyStats();
-        this.partyChart.render(stats, this.selectedParty);
+    private updateCharts() {
+        // Party Chart
+        const partyStats = this.service.getPartyStats();
+        this.partyChart.render(partyStats, this.selectedParty, {
+            type: 'bar',
+            showLegend: false
+        });
+
+        // Area Chart
+        const areaStats = this.service.getStats('areasOfActivity');
+        this.areaChart.render(areaStats, this.selectedArea, {
+            type: 'bar',
+            isHorizontal: true,
+            title: 'Áreas de Atuação (Top 15)'
+        });
+
+        // Region Chart
+        const regionStats = this.service.getStats('electoralBase');
+        this.regionChart.render(regionStats, this.selectedRegion, {
+            type: 'doughnut',
+            title: 'Regiões (Top 15)',
+            showLegend: true
+        });
     }
 
     private handlePartySelect(party: string | null) {
         this.selectedParty = party;
-        this.render();
-        this.attachEvents();
-        this.updateChartUI();
         this.renderList();
     }
 
-    private updateChartUI() {
-        const container = document.getElementById(this.chartContainerId)?.parentElement;
-        if (!container) return;
+    private handleAreaSelect(area: string | null) {
+        this.selectedArea = area;
+        this.renderList();
+    }
 
-        const existingBtn = document.getElementById('clearPartyFilter');
-        if (this.selectedParty && !existingBtn) {
-            const btn = document.createElement('button');
-            btn.id = 'clearPartyFilter';
-            btn.className = 'absolute top-2 right-2 text-[10px] bg-red-500/20 text-red-400 hover:bg-red-500/30 px-3 py-1 rounded-full uppercase font-bold tracking-wider transition';
-            btn.innerHTML = `<i class="fas fa-times mr-1"></i> Remover filtro: ${this.selectedParty}`;
-            container.appendChild(btn);
-        } else if (!this.selectedParty && existingBtn) {
-            existingBtn.remove();
-        }
-
-        this.updateChart();
+    private handleRegionSelect(region: string | null) {
+        this.selectedRegion = region;
+        this.renderList();
     }
 
     private toggleSelection(email: string) {
@@ -293,5 +346,13 @@ export class DeputiesList {
         this.modal.open(emails, message);
 
         this.analytics.trackCounterAction('emails');
+    }
+
+    private renderClearFilter(label: string, _callback: () => void): string {
+        return `
+            <button data-clear-filter="${label}" class="absolute top-2 right-2 text-[10px] bg-red-500/20 text-red-400 hover:bg-red-500/30 px-3 py-1 rounded-full uppercase font-bold tracking-wider transition">
+                 <i class="fas fa-times mr-1"></i> Limpar
+            </button>
+         `;
     }
 }
