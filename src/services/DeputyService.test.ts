@@ -37,6 +37,15 @@ describe('DeputyService', () => {
         const results = serviceWithAccents.search("joao");
         expect(results.length).toBe(1);
     });
+
+    it('should filter by other fields (room, email)', () => {
+        const resultsRoom = service.search("1"); // Zebra (room 1)
+        expect(resultsRoom.some(d => d.name === "Zebra")).toBe(true);
+
+        const resultsEmail = service.search("z.com"); // Zebra (z@z.com)
+        expect(resultsEmail.length).toBe(1);
+        expect(resultsEmail[0].name).toBe("Zebra");
+    });
     it('should calculate party stats', () => {
         const stats = service.getPartyStats();
         expect(stats["A"]).toBe(2);

@@ -23,8 +23,12 @@ export class DeputyService {
     search(query: string): Deputy[] {
         const normalizedQuery = this.normalizeString(query);
         return this.deputies.filter(deputy => {
-            return this.normalizeString(deputy.name).includes(normalizedQuery) ||
-                this.normalizeString(deputy.party).includes(normalizedQuery);
+            return Object.values(deputy).some(value => {
+                if (typeof value === 'string') {
+                    return this.normalizeString(value).includes(normalizedQuery);
+                }
+                return false;
+            });
         });
     }
 
