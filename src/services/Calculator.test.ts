@@ -31,4 +31,10 @@ describe('CalculatorService', () => {
         // but let's try standard check first.
         expect(formatted).toContain('1.000,00');
     });
+
+    it('should format percent correctly', () => {
+        const p = calculator.formatPercent(10.55);
+        // Expect "10,55%" or similar depending on environment
+        expect(p).toContain('10,55%');
+    });
 });
