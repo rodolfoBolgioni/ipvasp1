@@ -24,19 +24,30 @@ export class Footer {
                     </div>
 
                     <div>
-                        <h4 class="text-slate-100 font-bold mb-6">Contato/Dev</h4>
-                        <ul class="space-y-3">
-                             <li>
-                                <a href="https://github.com/rodolfoBolgioni/ipvasp1" target="_blank" class="flex items-center gap-2 hover:text-white transition-colors group">
-                                    <i class="fab fa-github text-lg group-hover:text-purple-400 transition-colors"></i>
-                                    <span>Contribuir (GitHub)</span>
-                                </a>
-                            </li>
-                             <li>
-                                <span class="block text-xs mt-2">Projeto Open Source.</span>
-                                <span class="block text-xs">Junte-se a nós no desenvolvimento!</span>
-                            </li>
-                        </ul>
+                        <h4 class="text-slate-100 font-bold mb-6">Desenvolvido por</h4>
+                        
+                        <!-- Perfil do Desenvolvedor -->
+                        <div class="flex items-center gap-3 mb-4 group">
+                            <img src="https://github.com/rodolfoBolgioni.png" alt="Rodolfo Bolgioni" class="w-12 h-12 rounded-full border-2 border-slate-700 grayscale group-hover:grayscale-0 transition-all duration-300">
+                            <div>
+                                <span class="block text-slate-200 font-bold text-sm">Rodolfo Bolgioni</span>
+                                <div class="flex gap-2 mt-1">
+                                    <a href="https://www.linkedin.com/in/rodolfo-bolgioni-2a090756/" target="_blank" class="w-7 h-7 bg-blue-600/20 hover:bg-blue-600 text-blue-500 hover:text-white rounded flex items-center justify-center transition-all" title="LinkedIn">
+                                        <i class="fab fa-linkedin-in text-xs"></i>
+                                    </a>
+                                    <a href="https://github.com/rodolfoBolgioni" target="_blank" class="w-7 h-7 bg-slate-700/50 hover:bg-slate-700 text-slate-400 hover:text-white rounded flex items-center justify-center transition-all" title="GitHub Perfil">
+                                        <i class="fab fa-github text-xs"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2 border-t border-slate-800 pt-3">
+                             <a href="https://github.com/rodolfoBolgioni/ipvasp1" target="_blank" class="flex items-center gap-2 text-xs text-slate-500 hover:text-purple-400 transition-colors">
+                                <i class="fas fa-code-branch"></i>
+                                <span>Código Fonte do Projeto</span>
+                            </a>
+                        </div>
                     </div>
                 </div>
                 
