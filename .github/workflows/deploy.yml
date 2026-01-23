@@ -28,7 +28,7 @@ jobs:
 
       - name: 🔄 Update Deputy Data (ETL)
         id: etl
-        run: npx ts-node --esm scripts/update-deputies.ts
+        run: npx tsx scripts/update-deputies.ts
 
       - name: 💾 Commit updated data (if changed)
         run: |
