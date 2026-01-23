@@ -47,35 +47,12 @@ export class DeputyService {
 
                 // Specific normalization for Regions (electoralBase)
                 if (field === 'electoralBase') {
-                    normalized = normalized
-                        .replace(/ e região/gi, '')
-                        .replace(/^Região de /gi, '')
-                        .replace(/^Região Metropolitana de /gi, '')
-                        .replace(/^Região Metropolitana do /gi, '')
-                        .replace(/ e Região/gi, '') // Case sensitive catch
-                        .trim();
+                    normalized = this.normalizeRegion(normalized);
                 }
 
                 // Specific normalization for Areas of Activity
                 if (field === 'areasOfActivity') {
-                    const lower = normalized.toLowerCase();
-                    if (lower.includes('animal') || lower.includes('animais')) normalized = 'Causa Animal';
-                    else if (lower.includes('mulher')) normalized = 'Defesa da Mulher';
-                    else if (lower.includes('saúde') && !lower.includes('animal')) normalized = 'Saúde';
-                    else if (lower.includes('educação')) normalized = 'Educação';
-                    else if (lower.includes('segurança')) normalized = 'Segurança';
-                    else if (lower.includes('meio ambiente')) normalized = 'Meio Ambiente';
-                    else if (lower.includes('habitação')) normalized = 'Habitação';
-                    else if (lower.includes('agricultura')) normalized = 'Agricultura';
-                    else if (lower.includes('esporte')) normalized = 'Esportes';
-                    else if (lower.includes('cultura')) normalized = 'Cultura';
-                    else if (lower.includes('transporte')) normalized = 'Transportes';
-                    else if (lower.includes('idoso') || lower.includes('terceira idade')) normalized = 'Idosos';
-                    else if (lower.includes('deficiência') || lower.includes('pcd') || lower.includes('inclusão')) normalized = 'Pessoas com Deficiência';
-                    else if (lower.includes('criança') || lower.includes('adolescente') || lower.includes('infância')) normalized = 'Criança e Adolescente';
-
-                    // remove trailing period
-                    normalized = normalized.replace(/\.$/, '');
+                    normalized = this.normalizeArea(normalized);
                 }
 
                 if (normalized) {
@@ -88,6 +65,39 @@ export class DeputyService {
         return Object.fromEntries(
             Object.entries(stats).sort(([, a], [, b]) => b - a)
         );
+    }
+
+    public normalizeRegion(region: string): string {
+        return region
+            .replace(/ e região/gi, '')
+            .replace(/^Região de /gi, '')
+            .replace(/^Região Metropolitana de /gi, '')
+            .replace(/^Região Metropolitana do /gi, '')
+            .replace(/ e Região/gi, '') // Case sensitive catch
+            .trim();
+    }
+
+    public normalizeArea(area: string): string {
+        let normalized = area.trim();
+        const lower = normalized.toLowerCase();
+
+        if (lower.includes('animal') || lower.includes('animais')) return 'Causa Animal';
+        if (lower.includes('mulher')) return 'Defesa da Mulher';
+        if (lower.includes('saúde') && !lower.includes('animal')) return 'Saúde';
+        if (lower.includes('educação')) return 'Educação';
+        if (lower.includes('segurança')) return 'Segurança';
+        if (lower.includes('meio ambiente')) return 'Meio Ambiente';
+        if (lower.includes('habitação')) return 'Habitação';
+        if (lower.includes('agricultura')) return 'Agricultura';
+        if (lower.includes('esporte')) return 'Esportes';
+        if (lower.includes('cultura')) return 'Cultura';
+        if (lower.includes('transporte')) return 'Transportes';
+        if (lower.includes('idoso') || lower.includes('terceira idade')) return 'Idosos';
+        if (lower.includes('deficiência') || lower.includes('pcd') || lower.includes('inclusão')) return 'Pessoas com Deficiência';
+        if (lower.includes('criança') || lower.includes('adolescente') || lower.includes('infância')) return 'Criança e Adolescente';
+
+        // remove trailing period
+        return normalized.replace(/\.$/, '');
     }
 
     getPartyStats(): Record<string, number> {

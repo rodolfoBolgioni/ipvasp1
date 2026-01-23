@@ -38,10 +38,10 @@ export class DeputiesList {
         return `
         <section class="py-12 bg-slate-900 text-white relative overflow-hidden p-6 md:p-8" id="deputados">
             <div class="container mx-auto px-4 relative z-10">
-                 <div class="flex flex-col md:flex-row justify-between items-end mb-6 gap-4">
+                <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4 border-b border-white/5 pb-8">
                     <div>
                         <div class="flex items-center gap-3 mb-2">
-                           <h2 class="text-2xl font-black uppercase">Assembleia Legislativa - São Paulo</h2>
+                           <h2 class="text-2xl font-black uppercase tracking-tight">Assembleia Legislativa - SP</h2>
                            <span class="bg-teal-500/20 text-teal-300 text-xs font-bold px-2 py-1 rounded-full border border-teal-500/30">
                                 ${totalDeputies} Deputados
                            </span>
@@ -49,18 +49,6 @@ export class DeputiesList {
                         <p class="text-slate-400 text-sm max-w-lg leading-relaxed">
                             Pressione seu representante! Envie um e-mail cobrando o <strong>IPVA 1%</strong>.
                         </p>
-                    </div>
-                    
-                    <!-- Search & Actions -->
-                    <div class="w-full md:w-auto flex flex-col md:items-end gap-2">
-                        <div class="relative">
-                            <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
-                             <input type="text" id="deputadoSearch" placeholder="Buscar deputado ou partido..." 
-                                class="w-full md:w-64 bg-white/5 border border-white/10 rounded-lg pl-9 p-2.5 text-sm text-white outline-none focus:border-teal-500 transition placeholder-slate-600">
-                        </div>
-                         <button id="btnSelectAll" class="text-[10px] text-teal-400 font-bold hover:text-teal-300 transition uppercase tracking-wider">
-                            <i class="fas fa-check-double mr-1"></i> Selecionar Todos
-                        </button>
                     </div>
                 </div>
 
@@ -91,6 +79,25 @@ export class DeputiesList {
                             <canvas id="chart-region"></canvas>
                          </div>
                           ${this.selectedRegion ? this.renderClearFilter('Regiões', () => this.handleRegionSelect(null)) : ''}
+                    </div>
+                </div>
+
+                <!-- Search & Actions Bar -->
+                <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6 bg-slate-800/30 p-4 rounded-xl border border-white/5">
+                    <div class="relative w-full md:w-96">
+                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
+                         <input type="text" id="deputadoSearch" placeholder="Buscar deputado ou partido..." 
+                            class="w-full bg-slate-900/50 border border-white/10 rounded-lg pl-9 p-3 text-sm text-white outline-none focus:border-teal-500 transition placeholder-slate-600">
+                    </div>
+                    
+                    <div class="flex items-center gap-4">
+                         <button id="btnSelectFiltered" class="text-[11px] text-teal-400 font-bold hover:text-teal-300 transition uppercase tracking-wider flex items-center gap-2 bg-teal-500/10 px-4 py-2 rounded-lg border border-teal-500/20 hover:bg-teal-500/20">
+                            <i class="fas fa-check-double"></i> Selecionar Visíveis
+                        </button>
+                        
+                        <button id="btnClearAllFilters" class="hidden text-[11px] text-red-400 font-bold hover:text-red-300 transition uppercase tracking-wider flex items-center gap-2 bg-red-500/10 px-4 py-2 rounded-lg border border-red-500/20 hover:bg-red-500/20">
+                            <i class="fas fa-times"></i> Limpar Filtros
+                        </button>
                     </div>
                 </div>
 
@@ -130,8 +137,11 @@ export class DeputiesList {
             this.renderList();
         });
 
-        // Select All
-        document.getElementById('btnSelectAll')?.addEventListener('click', () => this.toggleSelectAll());
+        // Select Filtered
+        document.getElementById('btnSelectFiltered')?.addEventListener('click', () => this.toggleSelectFiltered());
+
+        // Clear All Filters
+        document.getElementById('btnClearAllFilters')?.addEventListener('click', () => this.handleClearAllFilters());
 
         // Bulk Send
         document.getElementById('btnBulkSend')?.addEventListener('click', () => this.handleBulkSend());
@@ -168,26 +178,15 @@ export class DeputiesList {
         const container = document.getElementById(this.containerId);
         if (!container) return;
 
-        let deputies = this.service.search(this.currentQuery);
-
-        // Filter by party
-        if (this.selectedParty) {
-            deputies = deputies.filter(d => d.party.toUpperCase() === this.selectedParty);
+        // Toggle Clean Filters Button
+        const hasFilters = this.currentQuery || this.selectedParty || this.selectedArea || this.selectedRegion;
+        const btnClear = document.getElementById('btnClearAllFilters');
+        if (btnClear) {
+            if (hasFilters) btnClear.classList.remove('hidden');
+            else btnClear.classList.add('hidden');
         }
 
-        // Filter by area
-        if (this.selectedArea) {
-            deputies = deputies.filter(d => {
-                return d.areasOfActivity && d.areasOfActivity.includes(this.selectedArea!);
-            });
-        }
-
-        // Filter by region
-        if (this.selectedRegion) {
-            deputies = deputies.filter(d => {
-                return d.electoralBase && d.electoralBase.includes(this.selectedRegion!);
-            });
-        }
+        const deputies = this.getFilteredDeputies();
 
         if (deputies.length === 0) {
             container.innerHTML = '<div class="col-span-full text-center p-10 text-slate-500">Nenhum deputado encontrado.</div>';
@@ -313,8 +312,8 @@ export class DeputiesList {
         this.renderList();
     }
 
-    private toggleSelectAll() {
-        const matching = this.service.search(this.currentQuery);
+    private toggleSelectFiltered() {
+        const matching = this.getFilteredDeputies(); // Factor out filtering logic
         const allSelected = matching.every(d => this.selectedDeputies.has(d.email));
 
         if (allSelected) {
@@ -323,6 +322,40 @@ export class DeputiesList {
             matching.forEach(d => this.selectedDeputies.add(d.email));
         }
         this.renderList();
+    }
+
+    private handleClearAllFilters() {
+        this.currentQuery = '';
+        this.selectedParty = null;
+        this.selectedArea = null;
+        this.selectedRegion = null;
+        this.renderList();
+    }
+
+    private getFilteredDeputies() {
+        let deputies = this.service.search(this.currentQuery);
+
+        if (this.selectedParty) {
+            deputies = deputies.filter(d => d.party.toUpperCase() === this.selectedParty);
+        }
+
+        if (this.selectedArea) {
+            deputies = deputies.filter(d => {
+                if (!d.areasOfActivity) return false;
+                const areas = d.areasOfActivity.split(/[;\n]+/).map(v => v.trim());
+                return areas.some(area => this.service.normalizeArea(area) === this.selectedArea);
+            });
+        }
+
+        if (this.selectedRegion) {
+            deputies = deputies.filter(d => {
+                if (!d.electoralBase) return false;
+                const regions = d.electoralBase.split(/[;\n]+/).map(v => v.trim());
+                return regions.some(region => this.service.normalizeRegion(region) === this.selectedRegion);
+            });
+        }
+
+        return deputies;
     }
 
     private updateActionBar() {
