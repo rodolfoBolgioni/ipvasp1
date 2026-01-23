@@ -98,11 +98,11 @@ export class CalculatorUI {
                         </div>
 
                         <!-- Col 2: Chart (Span 3) -->
-                        <div class="lg:col-span-3 bg-white rounded-2xl p-4 border border-slate-100 flex flex-col items-center justify-center relative">
-                            <span class="absolute top-4 left-0 right-0 text-center text-[10px] font-black text-slate-400 uppercase tracking-widest">Carga na Compra</span>
-                            <div class="w-48 h-48 relative">
+                        <!-- Col 2: Chart (Span 3) -->
+                        <div class="lg:col-span-3 bg-white rounded-2xl p-4 border border-slate-100 flex flex-col items-center justify-between relative">
+                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2 mb-4 text-center w-full block">Carga na Compra</span>
+                            <div class="w-48 h-48 relative flex items-center justify-center">
                                 <canvas id="markupChart"></canvas>
-                                <!-- Center Text Overlay if needed -->
                             </div>
                         </div>
 
