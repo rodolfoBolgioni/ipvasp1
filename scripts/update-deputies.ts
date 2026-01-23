@@ -143,12 +143,30 @@ async function fetchDeputies(): Promise<void> {
         }
 
         // 3. Save Data
+        // 3. Save Data
+        const sortedDeputies = deputies.sort((a, b) => a.name.localeCompare(b.name));
+        const outputPath = path.join(process.cwd(), 'src/data/deputies.json');
+
+        // Check if data changed
+        if (fs.existsSync(outputPath)) {
+            try {
+                const existingFile = fs.readFileSync(outputPath, 'utf-8');
+                const existingData: LocalDeputyData = JSON.parse(existingFile);
+
+                // Compare only deputy content, ignoring lastUpdated
+                if (JSON.stringify(existingData.deputies) === JSON.stringify(sortedDeputies)) {
+                    console.log('🛑 Nenhuma alteração nos dados detectada. Mantendo arquivo existente.');
+                    return;
+                }
+            } catch (e) {
+                console.warn('⚠️ Erro ao ler arquivo existente, forçando atualização.');
+            }
+        }
+
         const finalData: LocalDeputyData = {
             lastUpdated: new Date().toISOString(),
-            deputies: deputies.sort((a, b) => a.name.localeCompare(b.name))
+            deputies: sortedDeputies
         };
-
-        const outputPath = path.join(process.cwd(), 'src/data/deputies.json');
 
         // Garante que o diretório existe
         if (!fs.existsSync(path.dirname(outputPath))) {
