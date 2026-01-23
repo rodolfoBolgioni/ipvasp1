@@ -1,72 +1,62 @@
 # IPVA 1% SP - Movimento Apartidário de Iniciativa Popular
 
 Este projeto é a interface digital do movimento pela redução da alíquota do IPVA em São Paulo de 4% para 1%.
-O site foi refatorado para utilizar tecnologias modernas e boas práticas de engenharia de software (SOLID).
+O site foi refatorado para utilizar tecnologias modernas, garantindo performance, estabilidade e transparência nos dados.
 
-## 🌐 Acesso ao Site
-**[https://ipva1sp.com.br](https://ipva1sp.com.br)**
+## 🌟 Destaques do Projeto
+
+- **Lógica Blindada**: 100% de Cobertura de Testes Unitários nas regras de negócio.
+- **Dados Autônomos**: Script ETL que monitora a ALESP automaticamente.
+- **Deploy Contínuo**: Integração via GitHub Actions com segurança total (Secrets).
+- **UX Premium**: Design responsivo (Mobile-First) com TailwindCSS.
 
 ## 🚀 Arquitetura e Tecnologias
 
-O projeto migrou de um site estático para uma aplicação **Single Page Application (SPA)** moderna:
+Migramos de um site estático para uma **SPA** moderna e robusta:
 
-- **Linguagem**: TypeScript (Strict Mode)
-- **Framework**: Vite (Build & Dev Server)
-- **Estilo**: TailwindCSS (Utility-First)
-- **Gráficos**: Chart.js (Dashboard Interativo)
-- **Testes**: Vitest (Testes Unitários)
+- **Frontend**: TypeScript, Vite, TailwindCSS.
+- **Gráficos**: Chart.js (Interativos).
+- **Testes**: Vitest (QA).
+- **CI/CD**: GitHub Actions.
 
-### Estrutura do Projeto (SOLID)
+## 📂 Estrutura Inteligente (SOLID)
 
-O código foi reorganizado seguindo princípios de responsabilidade única:
+- **`src/services/`** *(100% Coverage)*:
+  - `CalculatorService.ts`: Regras de cálculo (Economia, Markup).
+  - `DeputyService.ts`: Gestão de dados e buscas otimizadas.
+  - `AnalyticsService.ts`: Integração de métricas com mocks para testes.
+  
+- **`src/components/`**:
+  - Camada visual limpa, separada da lógica.
 
-- **`src/services/`**: Camada de lógica de negócios pura.
-  - `CalculatorService.ts`: Regras de cálculo da "Taxa Invisível", Markup e Economia.
-  - `DeputyService.ts`: Gestão da lista de deputados e filtros de busca.
-  - `AnalyticsService.ts`: Integração com Google Analytics e CounterAPI.
+## 🤖 Automação e Deploy
 
-- **`src/components/`**: Camada de Interface do Usuário.
-  - `CalculatorUI.ts`: Manipulação do DOM e eventos do dashboard.
-  - `DeputiesList.ts`: Renderização da lista virtualizada e ações em massa.
-  - `ImpactSection.ts`: Contadores em tempo real.
+O deploy manual foi **aposentado**. O projeto se auto-gerencia:
 
-## 🛠️ Instalação e Execução
+1.  **Gatilho**: Toda segunda-feira às 08:00 (ou via Push na `master`).
+2.  **Verificação**: O script `scripts/update-deputies.ts` consulta a API da ALESP.
+3.  **Decisão**: Se (e somente se) houver mudança nos dados, ele atualiza o JSON.
+4.  **Publicação**: Constrói o site (`npm run build`) e envia para a Locaweb via FTP seguro.
 
-### Pré-requisitos
-- Node.js (v18+)
+*(Consulte `AUTOMATION.md` e `GITHUB_SECRETS.md` na pasta de documentação para detalhes).*
 
-### Desenvolvimento Local
-1. Instale as dependências:
-   ```bash
-   npm install
-   ```
-2. Inicie o servidor de desenvolvimento:
-   ```bash
-   npm run dev
-   ```
-3. Acesse `http://localhost:5173`
+## 🛠️ Como Rodar Localmente
 
-### Executando Testes
-Para validar as regras de negócio (cálculos e lógica de deputados):
+### Instalação
 ```bash
-npm run test
+npm install
 ```
 
-## 📦 Build e Deploy
-
-### Gerar Versão de Produção
+### Desenvolvimento
 ```bash
-npm run build
-```
-Isso criará a pasta `dist/` com os arquivos otimizados.
-
-### Deploy (FTP)
-Utilize o script simplificado para subir a pasta `dist` para o servidor:
-```powershell
-./env/deploy_simple.ps1
+npm run dev
 ```
 
-O script lida automaticamente com a conexão FTP e upload dos arquivos necessários.
+### Rodar Testes (QA)
+```bash
+npm run test           # Roda os testes
+npx vitest --coverage  # Gera relatório de cobertura
+```
 
 ---
 *Projeto independente pela liberdade econômica de quem produz.*
