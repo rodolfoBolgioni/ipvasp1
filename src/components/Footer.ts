@@ -40,8 +40,9 @@ export class Footer {
                     </div>
                 </div>
                 
-                <div class="pt-8 border-t border-slate-800 text-center text-xs text-slate-600">
-                    &copy; ${new Date().getFullYear()} Movimento IPVA 1%. Todos os direitos reservados.
+                <div class="pt-8 border-t border-slate-800 text-center text-xs text-slate-600 flex flex-col md:flex-row justify-between items-center gap-2">
+                    <span>&copy; ${new Date().getFullYear()} Movimento IPVA 1%. Todos os direitos reservados.</span>
+                    <span class="opacity-50 font-mono" title="Versão da Aplicação">v${__APP_VERSION__} (${__COMMIT_HASH__})</span>
                 </div>
             </div>
         </footer>
