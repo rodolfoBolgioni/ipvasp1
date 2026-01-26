@@ -152,12 +152,35 @@ async function fetchDeputies(): Promise<void> {
             try {
                 const existingFile = fs.readFileSync(outputPath, 'utf-8');
                 const existingData: LocalDeputyData = JSON.parse(existingFile);
+                const existingDeputiesMap = new Map(existingData.deputies.map(d => [d.id, d]));
+
+                // Validate and fallback to existing data if new data is missing fields
+                const validatedDeputies = sortedDeputies.map(newDeputy => {
+                    if (!newDeputy.email || !newDeputy.phone) {
+                        const existing = existingDeputiesMap.get(newDeputy.id);
+                        if (existing) {
+                            if (!newDeputy.email && existing.email) {
+                                console.warn(`⚠️ Dados faltantes (Email) para ${newDeputy.name}. Mantendo valor anterior.`);
+                                newDeputy.email = existing.email;
+                            }
+                            if (!newDeputy.phone && existing.phone) {
+                                console.warn(`⚠️ Dados faltantes (Tel) para ${newDeputy.name}. Mantendo valor anterior.`);
+                                newDeputy.phone = existing.phone;
+                            }
+                        }
+                    }
+                    return newDeputy;
+                });
 
                 // Compare only deputy content, ignoring lastUpdated
-                if (JSON.stringify(existingData.deputies) === JSON.stringify(sortedDeputies)) {
+                if (JSON.stringify(existingData.deputies) === JSON.stringify(validatedDeputies)) {
                     console.log('🛑 Nenhuma alteração nos dados detectada. Mantendo arquivo existente.');
                     return;
                 }
+
+                // Use validated list for saving
+                sortedDeputies.splice(0, sortedDeputies.length, ...validatedDeputies);
+
             } catch (e) {
                 console.warn('⚠️ Erro ao ler arquivo existente, forçando atualização.');
             }
