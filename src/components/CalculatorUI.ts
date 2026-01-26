@@ -439,17 +439,13 @@ export class CalculatorUI {
     }
     private updateTCOChart(res: any) {
         // Data prep
-        // Stack 1: Purchase Tax (Valor Imposto)
-        // Stack 2: Fuel Tax
-        // Stack 3: IPVA
+        // Stack 1: Cost Real (Base)
+        // Stack 2: Purchase Tax (Valor Imposto)
+        // Stack 3: Fuel Tax
+        // Stack 4: IPVA
 
-        const purchaseTax = res.taxValue; // Changed from res.price to show only tax
-        // Wait, 'res.price' is the user input price (e.g. 100k).
-        // My Logic in stack:
-        // Bar 1 = Price + (Fuel) + (IPVA Cur * 5)
-        // Bar 2 = Price + (Fuel) + (IPVA Prop * 5)
-        // This visualizes the Total Cost of Ownership.
-
+        const costReal = res.costReal; // Factory Cost
+        const purchaseTax = res.taxValue; // Purchase Tax
         const fuelTax = res.fuelTaxTotal;
         const ipvaCurrentTotal = res.ipvaCurrent * res.years;
         const ipvaProposedTotal = res.ipvaProposed * res.years;
@@ -458,9 +454,10 @@ export class CalculatorUI {
         if (!ctx) return;
 
         if (this.tcoChart) {
-            this.tcoChart.data.datasets[0].data = [purchaseTax, purchaseTax]; // Imposto Compra
-            this.tcoChart.data.datasets[1].data = [fuelTax, fuelTax]; // Combustível
-            this.tcoChart.data.datasets[2].data = [ipvaCurrentTotal, ipvaProposedTotal]; // IPVA
+            this.tcoChart.data.datasets[0].data = [costReal, costReal]; // Custo Real
+            this.tcoChart.data.datasets[1].data = [purchaseTax, purchaseTax]; // Imposto Compra
+            this.tcoChart.data.datasets[2].data = [fuelTax, fuelTax]; // Combustível
+            this.tcoChart.data.datasets[3].data = [ipvaCurrentTotal, ipvaProposedTotal]; // IPVA
             this.tcoChart.update();
         } else {
             this.tcoChart = new Chart(ctx, {
@@ -468,6 +465,12 @@ export class CalculatorUI {
                 data: {
                     labels: ['Hoje (IPVA 4%)', 'Proposta (IPVA 1%)'],
                     datasets: [
+                        {
+                            label: 'Custo Real (Fábrica)',
+                            data: [costReal, costReal],
+                            backgroundColor: '#1e293b', // slate-800
+                            barThickness: 40
+                        },
                         {
                             label: 'Imposto Compra',
                             data: [purchaseTax, purchaseTax],
