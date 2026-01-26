@@ -52,7 +52,7 @@ export class ExecutiveList {
                            </span>
                         </div>
                         <p class="text-slate-400 text-sm max-w-lg leading-relaxed">
-                            Apoie quem tem a caneta para propor a redução do IPVA.
+                            Cobre diretamente quem tem a caneta para propor a redução do IPVA.
                         </p>
                     </div>
                 </div>
