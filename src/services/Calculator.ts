@@ -11,13 +11,23 @@ export interface CalculatorResult {
     ipvaProposed: number; // Price * 0.01
     savings: number;      // IPVA Current - Proposed
 
-    totalTaxCurrent: number;  // TaxValue + (IPVA Current * Years)
-    totalTaxProposed: number; // TaxValue + (IPVA Proposed * Years)
+    fuelTaxTotal: number; // Fuel Price * (Tax% / 100) * (Mileage / Efficiency) * Years
+
+    totalTaxCurrent: number;  // TaxValue + (IPVA Current * Years) + FuelTaxTotal
+    totalTaxProposed: number; // TaxValue + (IPVA Proposed * Years) + FuelTaxTotal
 }
 
 export class CalculatorService {
-    calculate(price: number, taxRate: number = 41.3, years: number = 5): CalculatorResult {
-        // 1. Tax Value
+    calculate(
+        price: number,
+        taxRate: number = 41.3,
+        years: number = 5,
+        fuelPrice: number = 6.29,
+        fuelTaxPercent: number = 25.0,
+        mileage: number = 15000,
+        efficiency: number = 10.0
+    ): CalculatorResult {
+        // 1. Tax Value (Purchase)
         const taxValue = price * (taxRate / 100);
 
         // 2. Cost Real
@@ -34,9 +44,18 @@ export class CalculatorService {
         const ipvaProposed = price * 0.01;
         const savings = ipvaCurrent - ipvaProposed;
 
-        // 5. Total Tax (Long Term)
-        const totalTaxCurrent = taxValue + (ipvaCurrent * years);
-        const totalTaxProposed = taxValue + (ipvaProposed * years);
+        // 5. Fuel Tax (New)
+        // Liters per year = Mileage / Efficiency
+        // Tax per liter = Price * (Tax% / 100)
+        // Total Tax = Liters * TaxPerLiter * Years
+        const litersPerYear = mileage / efficiency;
+        const fuelTaxPerLiter = fuelPrice * (fuelTaxPercent / 100);
+        const fuelTaxTotal = litersPerYear * fuelTaxPerLiter * years;
+
+        // 6. Total Tax (Long Term)
+        // Includes Purchase Tax + IPVA * Years + FuelTax * Years
+        const totalTaxCurrent = taxValue + (ipvaCurrent * years) + fuelTaxTotal;
+        const totalTaxProposed = taxValue + (ipvaProposed * years) + fuelTaxTotal;
 
         return {
             price,
@@ -48,6 +67,7 @@ export class CalculatorService {
             ipvaCurrent,
             ipvaProposed,
             savings,
+            fuelTaxTotal,
             totalTaxCurrent,
             totalTaxProposed
         };

@@ -10,6 +10,12 @@ export class CalculatorUI {
     private currentTaxRate: number = 41.3;
     private currentYears: number = 5;
 
+    // Fuel State
+    private currentFuelPrice: number = 6.29;
+    private currentFuelTaxPercent: number = 25.0;
+    private currentMileage: number = 15000;
+    private currentEfficiency: number = 10.0;
+
     constructor() {
         this.service = new CalculatorService();
     }
@@ -18,7 +24,7 @@ export class CalculatorUI {
         return `
         <section class="py-12 md:py-16 -mt-10 relative z-20">
             <div class="container mx-auto px-4">
-                <div class="max-w-[1400px] mx-auto bg-white rounded-3xl shadow-2xl p-4 md:p-8 border-4 border-emerald-500 overflow-hidden">
+                <div class="max-w-[1400px] mx-auto bg-white rounded-3xl shadow-2xl p-4 md:p-8 border-4 border-emerald-500">
                     
                     <!-- Dashboard Grid -->
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6">
@@ -48,9 +54,42 @@ export class CalculatorUI {
                                         <input type="text" id="taxPercentInput" class="w-full bg-transparent text-red-600 font-black text-2xl outline-none" value="41,3%">
                                         <span class="text-[9px] text-red-300 font-bold uppercase block mt-1">Alíquota %</span>
                                     </div>
-                                    <div class="text-right">
+                                    <div class="text-right relative group/taxTooltip cursor-help">
                                         <div class="text-lg font-black text-red-700 leading-none" id="taxValueDisplay">R$ 41.300,00</div>
                                         <span class="text-[9px] text-red-400 font-bold uppercase block mt-1">Valor Imposto <i class="fas fa-info-circle"></i></span>
+                                        
+                                        <!-- Tooltip Tax Breakdown -->
+                                        <div class="absolute bottom-full right-0 mb-2 w-[340px] bg-white text-slate-900 rounded-lg p-4 shadow-xl opacity-0 invisible group-hover/taxTooltip:opacity-100 group-hover/taxTooltip:visible transition-all z-50 pointer-events-none text-left border border-slate-200">
+                                            <div class="absolute -bottom-1 right-2 w-2 h-2 bg-white rotate-45 border-b border-r border-slate-200"></div>
+                                            <p class="font-bold text-xs text-slate-800 mb-3 border-b border-slate-100 pb-2">Composição Tributária (SP - 2026)</p>
+                                            
+                                            <div class="grid grid-cols-[auto_auto_1fr] gap-x-3 gap-y-2 text-[9px] items-start">
+                                                <!-- Header -->
+                                                <div class="font-bold text-slate-400 uppercase tracking-wider text-[8px]">Tributo</div>
+                                                <div class="font-bold text-slate-400 uppercase tracking-wider text-[8px]">Alíq.</div>
+                                                <div class="font-bold text-slate-400 uppercase tracking-wider text-[8px]">Descrição</div>
+
+                                                <!-- Row 1 -->
+                                                <div class="font-bold text-red-600 bg-red-50 rounded px-1">ICMS</div>
+                                                <div class="font-bold text-slate-700">18%</div>
+                                                <div class="text-slate-500 leading-tight">Imposto estadual sobre a venda do veículo novo em SP.</div>
+
+                                                <!-- Row 2 -->
+                                                <div class="font-bold text-slate-700">IPI</div>
+                                                <div class="font-bold text-slate-700">0-18%</div>
+                                                <div class="text-slate-500 leading-tight">Variável pelo "IPI Verde". Modelos 1.0 supereficientes podem ter isenção total (0%) em 2026.</div>
+
+                                                <!-- Row 3 -->
+                                                <div class="font-bold text-slate-700">PIS/COFINS</div>
+                                                <div class="font-bold text-slate-700">~11%</div>
+                                                <div class="text-slate-500 leading-tight">Contribuições federais incidentes sobre a receita bruta da venda.</div>
+                                                
+                                                <!-- Row 4 -->
+                                                <div class="font-bold text-teal-600 bg-teal-50 rounded px-1">IBS/CBS</div>
+                                                <div class="font-bold text-slate-700">1,0%</div>
+                                                <div class="text-slate-500 leading-tight">Alíquota de teste da Reforma Tributária (0,1% IBS + 0,9% CBS) iniciada em jan/2026.</div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -111,6 +150,50 @@ export class CalculatorUI {
                             <div>
                                 <h3 class="text-[10px] font-bold text-teal-400 uppercase tracking-widest mb-6">Simulação de Posse</h3>
                                 
+                                <!-- Fuel Inputs -->
+                                <div class="grid grid-cols-2 gap-4 mb-6">
+                                    <!-- Fuel Price -->
+                                    <div class="relative group/fuelPrice">
+                                        <div class="flex items-center gap-1 mb-1">
+                                             <label class="text-[9px] text-slate-400 uppercase font-bold">Gasolina (R$)</label>
+                                             <i class="fas fa-question-circle text-[9px] text-teal-400 cursor-help"></i>
+                                        </div>
+                                         <input type="text" id="fuelPriceInput" value="R$ 6,29" class="w-full bg-slate-800 rounded px-2 py-1 text-xs font-bold text-white border border-slate-700 focus:border-teal-500 outline-none">
+                                        
+                                        <!-- Tooltip -->
+                                        <div class="absolute bottom-full left-0 mb-2 w-64 bg-white text-slate-900 rounded-lg p-3 shadow-xl opacity-0 invisible group-hover/fuelPrice:opacity-100 group-hover/fuelPrice:visible transition-all z-50 pointer-events-none text-left border border-slate-200">
+                                            <div class="absolute -bottom-1 left-4 w-2 h-2 bg-white rotate-45 border-b border-r border-slate-200"></div>
+                                            <p class="font-bold text-xs text-slate-800 mb-2">Composição Gasolina SP (Jan/2026)</p>
+                                            <div class="space-y-1 text-[10px]">
+                                                <div class="flex justify-between"><span>Petrobras</span> <span>R$ 2,33 (37%)</span></div>
+                                                <div class="flex justify-between"><span>Etanol (30%)</span> <span>R$ 1,18 (19%)</span></div>
+                                                <div class="flex justify-between font-bold text-red-600 bg-red-50 px-1 rounded"><span>ICMS (SP)</span> <span>R$ 1,57 (25%)</span></div>
+                                                <div class="flex justify-between"><span>PIS/COFINS</span> <span>R$ 0,47 (7.5%)</span></div>
+                                                <div class="flex justify-between"><span>Distribuição</span> <span>R$ 0,74 (11.7%)</span></div>
+                                                <div class="border-t pt-1 mt-1 flex justify-between font-bold"><span>Total</span> <span>R$ 6,29</span></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Tax % -->
+                                    <div>
+                                        <label class="text-[9px] text-slate-400 uppercase font-bold block mb-1">ICMS (%)</label>
+                                        <input type="text" id="fuelTaxInput" value="25,0%" class="w-full bg-slate-800 rounded px-2 py-1 text-xs font-bold text-white border border-slate-700 focus:border-teal-500 outline-none">
+                                    </div>
+
+                                    <!-- Mileage -->
+                                    <div>
+                                        <label class="text-[9px] text-slate-400 uppercase font-bold block mb-1">Km/Ano</label>
+                                        <input type="number" id="mileageInput" value="15000" step="1000" class="w-full bg-slate-800 rounded px-2 py-1 text-xs font-bold text-white border border-slate-700 focus:border-teal-500 outline-none">
+                                    </div>
+
+                                    <!-- Efficiency -->
+                                    <div>
+                                        <label class="text-[9px] text-slate-400 uppercase font-bold block mb-1">Km/Litro</label>
+                                        <input type="number" id="efficiencyInput" value="10" step="0.5" class="w-full bg-slate-800 rounded px-2 py-1 text-xs font-bold text-white border border-slate-700 focus:border-teal-500 outline-none">
+                                    </div>
+                                </div>
+                                
                                 <div class="mb-8">
                                     <label class="text-[9px] text-slate-400 uppercase font-bold block mb-2">Tempo com o Veículo (Anos)</label>
                                     <div class="flex items-center gap-4">
@@ -125,7 +208,8 @@ export class CalculatorUI {
                                 <div>
                                     <span class="text-[9px] text-slate-400 uppercase font-bold block">Total Pago ao Governo (Hoje)</span>
                                     <div class="text-3xl font-black text-red-400" id="totalTaxCurrent">R$ 61.300,00</div>
-                                    <span class="text-[9px] text-slate-500 italic block leading-tight mt-1">Imposto Compra + (IPVA 4% x Anos)</span>
+                                    <span class="text-[9px] text-slate-500 italic block leading-tight mt-1">Imposto Compra + (IPVA 4% x Anos) + Combustível</span>
+                                    <div class="mt-2 text-[10px] text-red-300/80 font-mono" id="fuelTaxDisplay">+ R$ 11.775 (ICMS Comb.)</div>
                                 </div>
                                 <div class="pt-4 border-t border-white/10">
                                     <span class="text-[9px] text-teal-400 uppercase font-bold block">Com IPVA 1% (Proposto)</span>
@@ -164,6 +248,11 @@ export class CalculatorUI {
         const priceInput = document.getElementById('priceInput') as HTMLInputElement;
         const taxInput = document.getElementById('taxPercentInput') as HTMLInputElement;
         const yearsInput = document.getElementById('yearsInput') as HTMLInputElement;
+
+        const fuelPriceInput = document.getElementById('fuelPriceInput') as HTMLInputElement;
+        const fuelTaxInput = document.getElementById('fuelTaxInput') as HTMLInputElement;
+        const mileageInput = document.getElementById('mileageInput') as HTMLInputElement;
+        const efficiencyInput = document.getElementById('efficiencyInput') as HTMLInputElement;
         const btnMinus = document.getElementById('btnMinusYear');
         const btnPlus = document.getElementById('btnPlusYear');
 
@@ -214,6 +303,36 @@ export class CalculatorUI {
         });
 
         // Initial Chart Draw
+
+        // Fuel Events
+        if (fuelPriceInput) {
+            fuelPriceInput.addEventListener('change', (e) => {
+                let val = (e.target as HTMLInputElement).value.replace(/[^0-9,]/g, '').replace(',', '.');
+                this.currentFuelPrice = parseFloat(val) || 6.29;
+                (e.target as HTMLInputElement).value = this.currentFuelPrice.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                this.update();
+            });
+        }
+        if (fuelTaxInput) {
+            fuelTaxInput.addEventListener('change', (e) => {
+                let val = (e.target as HTMLInputElement).value.replace(/[^0-9,]/g, '').replace(',', '.');
+                this.currentFuelTaxPercent = parseFloat(val) || 25.0;
+                (e.target as HTMLInputElement).value = this.currentFuelTaxPercent.toLocaleString('pt-BR', { minimumFractionDigits: 1 }) + '%';
+                this.update();
+            });
+        }
+        if (mileageInput) {
+            mileageInput.addEventListener('input', (e) => {
+                this.currentMileage = parseFloat((e.target as HTMLInputElement).value) || 0;
+                this.update();
+            });
+        }
+        if (efficiencyInput) {
+            efficiencyInput.addEventListener('input', (e) => {
+                this.currentEfficiency = parseFloat((e.target as HTMLInputElement).value) || 1;
+                this.update();
+            });
+        }
         this.update();
     }
 
@@ -224,7 +343,15 @@ export class CalculatorUI {
         if (isNaN(this.currentYears)) this.currentYears = 5;
 
         // Calc
-        const res = this.service.calculate(this.currentPrice, this.currentTaxRate, this.currentYears);
+        const res = this.service.calculate(
+            this.currentPrice,
+            this.currentTaxRate,
+            this.currentYears,
+            this.currentFuelPrice,
+            this.currentFuelTaxPercent,
+            this.currentMileage,
+            this.currentEfficiency
+        );
 
         // Update Text
         this.setText('taxValueDisplay', this.service.formatCurrency(res.taxValue));
@@ -235,6 +362,9 @@ export class CalculatorUI {
         this.setText('ipvaCurrent', this.service.formatCurrency(res.ipvaCurrent));
         this.setText('ipvaProposed', this.service.formatCurrency(res.ipvaProposed));
         this.setText('ipvaSavings', this.service.formatCurrency(res.savings));
+
+        // Show Fuel Tax isolated
+        this.setText('fuelTaxDisplay', `+ ${this.service.formatCurrency(res.fuelTaxTotal)} (ICMS Comb.)`);
 
         // Update Chart
         this.updateChart(res.costReal, res.taxValue);
