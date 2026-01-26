@@ -21,7 +21,7 @@ export class CalculatorService {
     calculate(
         price: number,
         taxRate: number = 41.3,
-        years: number = 5,
+        years: number = 20,
         fuelPrice: number = 6.29,
         fuelTaxPercent: number = 25.0,
         mileage: number = 15000,

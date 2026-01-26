@@ -11,14 +11,14 @@ describe('CalculatorService', () => {
         expect(result.ipvaProposed).toBe(1000); // 1% of 100k
         expect(result.savings).toBe(3000);
 
-        // Fuel Verification (Defaults: 15k km, 10km/l, R$6.29, 25% tax, 5 years)
+        // Fuel Verification (Defaults: 15k km, 10km/l, R$6.29, 25% tax, 20 years)
         // Tax/Liter: 6.29 * 0.25 = 1.5725
         // Liters/Year: 15000/10 = 1500
-        // Total Tax: 1500 * 1.5725 * 5 = 11793.75
-        expect(result.fuelTaxTotal).toBeCloseTo(11793.75, 2);
+        // Total Tax: 1500 * 1.5725 * 20 = 47175
+        expect(result.fuelTaxTotal).toBeCloseTo(47175, 2);
 
-        // Total Tax Current: 41300 (Purchase) + 20000 (IPVA 5y) + 11793.75 (Fuel)
-        expect(result.totalTaxCurrent).toBeCloseTo(73093.75, 2);
+        // Total Tax Current: 41300 (Purchase) + 80000 (IPVA 20y) + 47175 (Fuel)
+        expect(result.totalTaxCurrent).toBeCloseTo(168475, 2);
     });
 
     it('should calculate savings correctly for 50k vehicle with custom fuel params', () => {

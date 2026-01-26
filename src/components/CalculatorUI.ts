@@ -9,7 +9,7 @@ export class CalculatorUI {
     // State
     private currentPrice: number = 100000;
     private currentTaxRate: number = 41.3;
-    private currentYears: number = 5;
+    private currentYears: number = 20;
 
     // Fuel State
     private currentFuelPrice: number = 6.29;
@@ -211,7 +211,7 @@ export class CalculatorUI {
                                     <label class="text-[9px] text-slate-400 uppercase font-bold block mb-2">Tempo com o Veículo (Anos)</label>
                                     <div class="flex items-center gap-4">
                                         <button class="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition font-bold" id="btnMinusYear">-</button>
-                                        <input type="number" id="yearsInput" value="5" min="1" max="30" class="w-16 bg-transparent text-center text-2xl font-black text-white outline-none border-b-2 border-teal-500 focus:border-teal-400 transition">
+                                        <input type="number" id="yearsInput" value="20" min="1" max="30" class="w-16 bg-transparent text-center text-2xl font-black text-white outline-none border-b-2 border-teal-500 focus:border-teal-400 transition">
                                         <button class="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition font-bold" id="btnPlusYear">+</button>
                                     </div>
                                 </div>
@@ -353,7 +353,7 @@ export class CalculatorUI {
         // Safe defaults
         if (isNaN(this.currentPrice)) this.currentPrice = 0;
         if (isNaN(this.currentTaxRate)) this.currentTaxRate = 41.3;
-        if (isNaN(this.currentYears)) this.currentYears = 5;
+        if (isNaN(this.currentYears)) this.currentYears = 20;
 
         // Calc
         const res = this.service.calculate(
