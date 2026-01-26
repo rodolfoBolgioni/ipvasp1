@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ${plan.render()} <!-- Restored Video+PDF -->
             
             <!-- Executive Section -->
-            ${executiveList.render()}
+            <!-- Executive List Hidden for Validation -->
 
             ${deputiesList.render()}
             ${impact.render()}
@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Hydrate (Attach Events)
     calculator.attachEvents();
-    executiveList.attachEvents();
+    // executiveList.attachEvents();
     deputiesList.attachEvents();
 
     // Wire up events
