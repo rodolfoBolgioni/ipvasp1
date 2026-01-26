@@ -41,7 +41,7 @@ export class ExecutiveList {
         const apoio = executiveData.projeto_lei_ipva.apoio_estrategico;
 
         return `
-        <section class="py-12 bg-slate-900 text-white relative overflow-hidden p-6 md:p-8" id="executivo">
+        <section class="py-12 bg-slate-950 text-white relative overflow-hidden p-6 md:p-8 border-b border-white/5" id="executivo">
             <div class="container mx-auto px-4 relative z-10">
                 <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4 border-b border-white/5 pb-8">
                     <div>
