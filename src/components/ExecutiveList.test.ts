@@ -28,8 +28,6 @@ describe('ExecutiveList', () => {
 
     it('should render all secretaries', () => {
         const html = executiveList.render();
-        const nucleoCount = executiveData.projeto_lei_ipva.nucleo_decisorio.length;
-        const apoioCount = executiveData.projeto_lei_ipva.apoio_estrategico.length;
 
         // Simple check: specific names should be present
         expect(html).toContain('Samuel Kinoshita'); // Nucleo
