@@ -151,7 +151,7 @@ export class CalculatorUI {
 
                             <!-- Chart 2: TCO -->
                             <div class="w-full flex flex-col items-center flex-1 min-h-0">
-                                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 text-center w-full block">Custo Total (5 Anos)</span>
+                                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 text-center w-full block" id="tcoChartTitle">Custo Total (5 Anos)</span>
                                 <div class="w-full h-40 relative">
                                     <canvas id="tcoChart"></canvas>
                                 </div>
@@ -377,7 +377,11 @@ export class CalculatorUI {
         this.setText('ipvaSavings', this.service.formatCurrency(res.savings));
 
         // Show Fuel Tax isolated
+        // Show Fuel Tax isolated
         this.setText('fuelTaxDisplay', `+ ${this.service.formatCurrency(res.fuelTaxTotal)} (ICMS Comb.)`);
+
+        // Update Chart Title
+        this.setText('tcoChartTitle', `Custo Total (${res.years} Anos)`);
 
         // Update Chart
         this.updateChart(res.costReal, res.taxValue);
