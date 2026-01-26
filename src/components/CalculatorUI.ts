@@ -4,6 +4,7 @@ import Chart from 'chart.js/auto';
 export class CalculatorUI {
     private service: CalculatorService;
     private chart: Chart | null = null;
+    private tcoChart: Chart | null = null;
 
     // State
     private currentPrice: number = 100000;
@@ -95,7 +96,7 @@ export class CalculatorUI {
                             </div>
                             
                             <!-- Internal Costs -->
-                            <div class="grid grid-cols-2 gap-4 mt-auto">
+                            <div class="grid grid-cols-1 gap-4 mt-auto">
                                 <!-- Custo Real -->
                                 <div class="bg-slate-100 rounded-xl p-3 border border-slate-200 relative group/costTooltip cursor-help">
                                     <div class="flex items-center gap-1">
@@ -138,10 +139,22 @@ export class CalculatorUI {
 
                         <!-- Col 2: Chart (Span 3) -->
                         <!-- Col 2: Chart (Span 3) -->
-                        <div class="lg:col-span-3 bg-white rounded-2xl p-4 border border-slate-100 flex flex-col items-center justify-between relative">
-                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2 mb-4 text-center w-full block">Carga na Compra</span>
-                            <div class="w-48 h-48 relative flex items-center justify-center">
-                                <canvas id="markupChart"></canvas>
+                        <div class="lg:col-span-3 bg-white rounded-2xl p-4 border border-slate-100 flex flex-col items-center justify-between relative space-y-6">
+                            
+                            <!-- Chart 1: Markup -->
+                            <div class="w-full flex flex-col items-center">
+                                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 text-center w-full block">Carga na Compra</span>
+                                <div class="w-32 h-32 relative flex items-center justify-center">
+                                    <canvas id="markupChart"></canvas>
+                                </div>
+                            </div>
+
+                            <!-- Chart 2: TCO -->
+                            <div class="w-full flex flex-col items-center flex-1 min-h-0">
+                                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 text-center w-full block">Custo Total (5 Anos)</span>
+                                <div class="w-full h-40 relative">
+                                    <canvas id="tcoChart"></canvas>
+                                </div>
                             </div>
                         </div>
 
@@ -368,6 +381,7 @@ export class CalculatorUI {
 
         // Update Chart
         this.updateChart(res.costReal, res.taxValue);
+        this.updateTCOChart(res);
     }
 
     private setText(id: string, text: string) {
@@ -419,6 +433,84 @@ export class CalculatorUI {
                         }
                     },
                     cutout: '75%'
+                }
+            });
+        }
+    }
+    private updateTCOChart(res: any) {
+        // Data prep
+        // Stack 1: Base (Vehicle Cost + Purchase Tax) -> "Valor do Carro"
+        // Stack 2: Fuel Tax
+        // Stack 3: IPVA
+
+        const vehicleCost = res.price; // Cost + Tax (Already full price)
+        // Wait, 'res.price' is the user input price (e.g. 100k).
+        // My Logic in stack:
+        // Bar 1 = Price + (Fuel) + (IPVA Cur * 5)
+        // Bar 2 = Price + (Fuel) + (IPVA Prop * 5)
+        // This visualizes the Total Cost of Ownership.
+
+        const fuelTax = res.fuelTaxTotal;
+        const ipvaCurrentTotal = res.ipvaCurrent * res.years;
+        const ipvaProposedTotal = res.ipvaProposed * res.years;
+
+        const ctx = document.getElementById('tcoChart') as HTMLCanvasElement;
+        if (!ctx) return;
+
+        if (this.tcoChart) {
+            this.tcoChart.data.datasets[0].data = [vehicleCost, vehicleCost]; // Carro
+            this.tcoChart.data.datasets[1].data = [fuelTax, fuelTax]; // Combustível
+            this.tcoChart.data.datasets[2].data = [ipvaCurrentTotal, ipvaProposedTotal]; // IPVA
+            this.tcoChart.update();
+        } else {
+            this.tcoChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Hoje (IPVA 4%)', 'Proposta (IPVA 1%)'],
+                    datasets: [
+                        {
+                            label: 'Valor Veículo',
+                            data: [vehicleCost, vehicleCost],
+                            backgroundColor: '#94a3b8', // slate-400
+                            barThickness: 40
+                        },
+                        {
+                            label: 'ICMS Combustível',
+                            data: [fuelTax, fuelTax],
+                            backgroundColor: '#f87171', // red-400
+                            barThickness: 40
+                        },
+                        {
+                            label: 'IPVA (Total Período)',
+                            data: [ipvaCurrentTotal, ipvaProposedTotal],
+                            backgroundColor: ['#dc2626', '#14b8a6'], // red-600 vs teal-500
+                            barThickness: 40
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                label: function (context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) label += ': ';
+                                    label += (context.raw as number).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { stacked: true, grid: { display: false }, ticks: { font: { size: 10, weight: 'bold' }, color: '#64748b' } },
+                        y: { stacked: true, display: false, grid: { display: false } }
+                    },
+                    animation: { duration: 500 }
                 }
             });
         }
