@@ -27,6 +27,22 @@ export class Modal {
                     <!-- Body (Scrollable) -->
                     <div class="p-6 overflow-y-auto space-y-6">
                         
+                        <!-- Step 1: Open Email -->
+                         <div class="space-y-3">
+                            <div class="flex items-center gap-2 text-slate-800 font-semibold">
+                                <span class="flex items-center justify-center w-6 h-6 rounded-full bg-slate-100 text-xs">1</span>
+                                Abra seu e-mail e envie
+                            </div>
+                            <!-- Dynamic Buttons Container -->
+                            <div id="emailActionButtons" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <!-- Injected via TS -->
+                            </div>
+                            
+                            <p class="text-xs text-slate-400 text-center mt-2">
+                                Se os botões acima não abrirem seu app, utilize a cópia manual abaixo.
+                            </p>
+                        </div>
+
                         <!-- Alert Warning -->
                         <div class="bg-amber-50 border border-amber-100 rounded-xl p-4 flex gap-3">
                             <div class="text-amber-500 shrink-0 mt-1"><i class="fas fa-exclamation-triangle"></i></div>
@@ -37,10 +53,10 @@ export class Modal {
                             </div>
                         </div>
 
-                        <!-- Step 1: Copy Emails -->
+                        <!-- Step 2: Copy Emails -->
                         <div class="space-y-3">
                             <div class="flex items-center gap-2 text-slate-800 font-semibold">
-                                <span class="flex items-center justify-center w-6 h-6 rounded-full bg-slate-100 text-xs">1</span>
+                                <span class="flex items-center justify-center w-6 h-6 rounded-full bg-slate-100 text-xs">2</span>
                                 Copie os e-mails abaixo
                             </div>
                             <div class="relative group">
@@ -51,10 +67,10 @@ export class Modal {
                             </div>
                         </div>
 
-                        <!-- Step 2: Copy Message -->
+                        <!-- Step 3: Copy Message -->
                         <div class="space-y-3">
                              <div class="flex items-center gap-2 text-slate-800 font-semibold">
-                                <span class="flex items-center justify-center w-6 h-6 rounded-full bg-slate-100 text-xs">2</span>
+                                <span class="flex items-center justify-center w-6 h-6 rounded-full bg-slate-100 text-xs">3</span>
                                 Copie a mensagem sugerida
                             </div>
                             <div class="relative group">
@@ -63,22 +79,6 @@ export class Modal {
                                     <i class="fas fa-copy mr-1"></i> Copiar
                                 </button>
                             </div>
-                        </div>
-
-                         <!-- Step 3: Open Email -->
-                         <div class="space-y-3">
-                            <div class="flex items-center gap-2 text-slate-800 font-semibold">
-                                <span class="flex items-center justify-center w-6 h-6 rounded-full bg-slate-100 text-xs">3</span>
-                                Abra seu e-mail e envie
-                            </div>
-                            <!-- Dynamic Buttons Container -->
-                            <div id="emailActionButtons" class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                <!-- Injected via TS -->
-                            </div>
-                            
-                            <p class="text-xs text-slate-400 text-center mt-2">
-                                Se os botões acima não abrirem seu app, utilize a cópia manual acima.
-                            </p>
                         </div>
                     </div>
 
