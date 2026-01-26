@@ -3,7 +3,7 @@ import { Header } from './components/Header';
 import { CalculatorUI } from './components/CalculatorUI';
 import { PlanSection } from './components/PlanSection';
 import { DeputiesList } from './components/DeputiesList';
-import { ExecutiveList } from './components/ExecutiveList';
+// import { ExecutiveList } from './components/ExecutiveList';
 import { ImpactSection } from './components/ImpactSection';
 import { Modal } from './components/Modal';
 import { Footer } from './components/Footer';
@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const footer = new Footer();
 
     // Instantiate Executive List
-    const executiveList = new ExecutiveList(modal);
+    // const executiveList = new ExecutiveList(modal);
 
     // Render Layout
     app.innerHTML = `
