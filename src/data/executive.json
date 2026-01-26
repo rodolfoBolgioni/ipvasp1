@@ -1,0 +1,72 @@
+{
+    "governador_sp": {
+        "nome": "Tarcísio de Freitas",
+        "partido": "Republicanos",
+        "cargo": "Governador do Estado de São Paulo",
+        "gabinete": {
+            "chefe_de_gabinete": "André Porto",
+            "endereco": "Palácio dos Bandeirantes, Av. Morumbi, 4500 - Morumbi, São Paulo - SP, 05606-901",
+            "contato_geral": {
+                "telefone": "11 2193-8000",
+                "email_institucional": "imprensa@sp.gov.br"
+            }
+        },
+        "foto": "https://sp.gov.br/wcm/connect/d236cba9-4c75-4a13-bf55-e23d5b44339f/1/52607280481_5cb23ee050_c.jpg?MOD=AJPERES"
+    },
+    "projeto_lei_ipva": {
+        "nucleo_decisorio": [
+            {
+                "secretaria": "Secretaria da Fazenda e Planejamento (Sefaz-SP)",
+                "secretario": "Samuel Kinoshita",
+                "papel_estrategico": "Cálculo de impacto financeiro e aval técnico tributário.",
+                "foto": "https://admin.cms.sp.gov.br/dx/api/dam/v1/collections/99d9d828-6e77-4359-9c16-7cf72ca2cc7c/items/effa5dbb-e5af-434c-b5b2-548b9110be44/renditions/64a95101-17ac-40b3-a647-afdabfdc267a?binary=true",
+                "contatos": {
+                    "email": "imprensa@fazenda.sp.gov.br",
+                    "telefone": "11 3243-3427"
+                }
+            },
+            {
+                "secretaria": "Casa Civil",
+                "secretario": "Roberto Carneiro",
+                "papel_estrategico": "Responsável pela articulação política e redação final de projetos enviados à ALESP.",
+                "foto": "https://republicanos10sp.org.br/wp-content/uploads/2023/10/Roberto-Carneiro-Presidente-estadual-do-Republicanos-SP-agencia-republicana-5-1024x684.jpg",
+                "contatos": {
+                    "email": "imprensacasacivil@sp.gov.br",
+                    "telefone": "11 2193-8786"
+                }
+            },
+            {
+                "secretaria": "Governo e Relações Institucionais",
+                "secretario": "Gilberto Kassab",
+                "papel_estrategico": "Articulação com deputados estaduais para aprovação da proposta.",
+                "foto": "https://admin.cms.sp.gov.br/dx/api/dam/v1/collections/99d9d828-6e77-4359-9c16-7cf72ca2cc7c/items/811dbbac-87d1-4119-bbda-6661347720d3/renditions/fab36494-5499-4478-a4ba-f18410a86edb?binary=true",
+                "contatos": {
+                    "email": "imprensa@sp.gov.br",
+                    "telefone": "11 2193-8197"
+                }
+            }
+        ],
+        "apoio_estrategico": [
+            {
+                "secretaria": "Desenvolvimento Econômico",
+                "secretario": "Jorge Lima",
+                "papel_estrategico": "Fomento à competitividade e atração de novos investimentos.",
+                "foto": "https://admin.cms.sp.gov.br/dx/api/dam/v1/collections/99d9d828-6e77-4359-9c16-7cf72ca2cc7c/items/61487805-d261-453a-aa66-76536a9256c5/renditions/33ebde19-8b10-4da6-8217-22e3af253f30?binary=true",
+                "contatos": {
+                    "email": "imprensa@sde.sp.gov.br",
+                    "telefone": "11 3718-6609"
+                }
+            },
+            {
+                "secretaria": "Procuradoria Geral do Estado (PGE)",
+                "secretaria_chefe": "Inês Maria dos Santos Coimbra",
+                "papel_estrategico": "Análise jurídica sobre a viabilidade e constitucionalidade da redução.",
+                "foto": "https://admin.cms.sp.gov.br/dx/api/dam/v1/collections/99d9d828-6e77-4359-9c16-7cf72ca2cc7c/items/e0128ae3-b967-4b8a-b1f8-894974df83b8/renditions/073db87a-2b3a-455c-a128-dd8077dac926?binary=true",
+                "contatos": {
+                    "email": "aipge@sp.gov.br",
+                    "telefone": "11 3372-6428"
+                }
+            }
+        ]
+    }
+}

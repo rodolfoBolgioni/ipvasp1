@@ -3,6 +3,7 @@ import { Header } from './components/Header';
 import { CalculatorUI } from './components/CalculatorUI';
 import { PlanSection } from './components/PlanSection';
 import { DeputiesList } from './components/DeputiesList';
+import { ExecutiveList } from './components/ExecutiveList';
 import { ImpactSection } from './components/ImpactSection';
 import { Modal } from './components/Modal';
 import { Footer } from './components/Footer';
@@ -17,11 +18,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const plan = new PlanSection();
     const modal = new Modal();
     const deputiesList = new DeputiesList(modal);
-    // ImpactSection seems to duplicate "Nosso Impacto". 
-    // The original code had Counters in "Nosso Impacto" section at the end.
-    // The previous ImpactSection was fine.
     const impact = new ImpactSection();
     const footer = new Footer();
+
+    // Instantiate Executive List
+    const executiveList = new ExecutiveList(modal);
 
     // Render Layout
     app.innerHTML = `
@@ -29,6 +30,10 @@ document.addEventListener('DOMContentLoaded', () => {
         <main>
             ${calculator.render()}
             ${plan.render()} <!-- Restored Video+PDF -->
+            
+            <!-- Executive Section -->
+            ${executiveList.render()}
+
             ${deputiesList.render()}
             ${impact.render()}
         </main>
@@ -38,6 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Hydrate (Attach Events)
     calculator.attachEvents();
+    executiveList.attachEvents();
     deputiesList.attachEvents();
 
     // Wire up events
