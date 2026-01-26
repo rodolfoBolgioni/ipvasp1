@@ -439,11 +439,11 @@ export class CalculatorUI {
     }
     private updateTCOChart(res: any) {
         // Data prep
-        // Stack 1: Base (Vehicle Cost + Purchase Tax) -> "Valor do Carro"
+        // Stack 1: Purchase Tax (Valor Imposto)
         // Stack 2: Fuel Tax
         // Stack 3: IPVA
 
-        const vehicleCost = res.price; // Cost + Tax (Already full price)
+        const purchaseTax = res.taxValue; // Changed from res.price to show only tax
         // Wait, 'res.price' is the user input price (e.g. 100k).
         // My Logic in stack:
         // Bar 1 = Price + (Fuel) + (IPVA Cur * 5)
@@ -458,7 +458,7 @@ export class CalculatorUI {
         if (!ctx) return;
 
         if (this.tcoChart) {
-            this.tcoChart.data.datasets[0].data = [vehicleCost, vehicleCost]; // Carro
+            this.tcoChart.data.datasets[0].data = [purchaseTax, purchaseTax]; // Imposto Compra
             this.tcoChart.data.datasets[1].data = [fuelTax, fuelTax]; // Combustível
             this.tcoChart.data.datasets[2].data = [ipvaCurrentTotal, ipvaProposedTotal]; // IPVA
             this.tcoChart.update();
@@ -469,8 +469,8 @@ export class CalculatorUI {
                     labels: ['Hoje (IPVA 4%)', 'Proposta (IPVA 1%)'],
                     datasets: [
                         {
-                            label: 'Valor Veículo',
-                            data: [vehicleCost, vehicleCost],
+                            label: 'Imposto Compra',
+                            data: [purchaseTax, purchaseTax],
                             backgroundColor: '#94a3b8', // slate-400
                             barThickness: 40
                         },
@@ -507,8 +507,8 @@ export class CalculatorUI {
                         }
                     },
                     scales: {
-                        x: { stacked: true, grid: { display: false }, ticks: { font: { size: 10, weight: 'bold' }, color: '#64748b' } },
-                        y: { stacked: true, display: false, grid: { display: false } }
+                        y: { stacked: true, display: false, grid: { display: false } }, // Reordered Y first for diff match if strict, but TS handles object key order loosely usually.
+                        x: { stacked: true, grid: { display: false }, ticks: { font: { size: 10, weight: 'bold' }, color: '#64748b' } }
                     },
                     animation: { duration: 500 }
                 }
