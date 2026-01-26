@@ -22,7 +22,7 @@ describe('ExecutiveList', () => {
     it('should render the governor section correctly', () => {
         const html = executiveList.render();
         expect(html).toContain('Tarcísio de Freitas');
-        expect(html).toContain('MOBILIZAR GOVERNO');
+        expect(html).toContain('COBRAR GOVERNADOR');
         expect(html).toContain('Apoie quem tem a caneta');
     });
 

@@ -90,7 +90,7 @@ export class ExecutiveList {
                             
                             <button onclick="window.executiveList.sendEmailAll()" 
                                 class="w-full md:w-auto bg-blue-600 hover:bg-blue-500 text-white px-8 py-4 rounded-xl font-black uppercase text-sm tracking-widest transition shadow-lg flex items-center justify-center gap-3 transform hover:scale-105">
-                                <i class="fas fa-paper-plane"></i> MOBILIZAR GOVERNO
+                                <i class="fas fa-paper-plane"></i> COBRAR GOVERNADOR
                             </button>
                          </div>
                     </div>

@@ -121,7 +121,7 @@ export class DeputiesList {
                         <span id="selectedCount" class="text-teal-400 text-lg mr-1 font-black">0</span> Selecionados
                     </span>
                     <button id="btnBulkSend" class="bg-teal-500 hover:bg-teal-400 text-slate-900 px-6 py-3 rounded-lg font-black uppercase text-xs tracking-widest transition shadow-lg flex items-center gap-2">
-                        <i class="fas fa-paper-plane"></i> Enviar Cobrança em Massa
+                        <i class="fas fa-paper-plane"></i> COBRAR DEPUTADOS
                     </button>
                 </div>
             </div>
