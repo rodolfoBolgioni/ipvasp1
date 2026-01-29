@@ -39,8 +39,8 @@ export class CalculatorUI {
                                     <span class="bg-emerald-100 text-emerald-600 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase">Editável</span>
                                 </div>
                                 <div class="relative">
-                                    <span class="absolute left-0 top-1/2 -translate-y-1/2 text-slate-800 font-bold text-xl">R$</span>
-                                    <input type="text" id="priceInput" class="w-full bg-transparent text-xl font-black text-slate-800 outline-none pl-8" value="100.000,00">
+                                    <span class="absolute left-0 top-1/2 -translate-y-1/2 text-slate-800 font-bold text-lg md:text-xl">R$</span>
+                                    <input type="text" id="priceInput" class="w-full bg-transparent text-lg md:text-xl font-black text-slate-800 outline-none pl-7 md:pl-8" value="100.000,00">
                                 </div>
                             </div>
 
@@ -51,16 +51,16 @@ export class CalculatorUI {
                                     <span class="bg-red-100 text-red-600 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase">Editável</span>
                                 </div>
                                 <div class="flex items-end justify-between gap-4">
-                                    <div class="relative w-24">
-                                        <input type="text" id="taxPercentInput" class="w-full bg-transparent text-red-600 font-black text-2xl outline-none" value="41,3%">
+                                    <div class="relative flex-1 min-w-0">
+                                        <input type="text" id="taxPercentInput" class="w-full bg-transparent text-red-600 font-black text-xl md:text-2xl outline-none" value="41,3%">
                                         <span class="text-[9px] text-red-300 font-bold uppercase block mt-1">Alíquota %</span>
                                     </div>
-                                    <div class="text-right relative group/taxTooltip cursor-help">
-                                        <div class="text-lg font-black text-red-700 leading-none" id="taxValueDisplay">R$ 41.300,00</div>
+                                    <div class="text-right flex-shrink-0 relative group/taxTooltip cursor-help">
+                                        <div class="text-base md:text-lg font-black text-red-700 leading-none whitespace-nowrap" id="taxValueDisplay">R$ 41.300,00</div>
                                         <span class="text-[9px] text-red-400 font-bold uppercase block mt-1">Valor Imposto <i class="fas fa-info-circle"></i></span>
                                         
                                         <!-- Tooltip Tax Breakdown -->
-                                        <div class="absolute bottom-full right-0 mb-2 w-[340px] bg-white text-slate-900 rounded-lg p-4 shadow-xl opacity-0 invisible group-hover/taxTooltip:opacity-100 group-hover/taxTooltip:visible transition-all z-50 pointer-events-none text-left border border-slate-200">
+                                        <div class="absolute bottom-full right-0 mb-2 w-[280px] sm:w-[340px] bg-white text-slate-900 rounded-lg p-4 shadow-xl opacity-0 invisible group-hover/taxTooltip:opacity-100 group-hover/taxTooltip:visible transition-all z-50 pointer-events-none text-left border border-slate-200">
                                             <div class="absolute -bottom-1 right-2 w-2 h-2 bg-white rotate-45 border-b border-r border-slate-200"></div>
                                             <p class="font-bold text-xs text-slate-800 mb-3 border-b border-slate-100 pb-2">Composição Tributária (SP - 2026)</p>
                                             
@@ -220,13 +220,13 @@ export class CalculatorUI {
                             <div class="space-y-4">
                                 <div>
                                     <span class="text-[9px] text-slate-400 uppercase font-bold block">Total Pago ao Governo (Hoje)</span>
-                                    <div class="text-3xl font-black text-red-400" id="totalTaxCurrent">R$ 61.300,00</div>
+                                    <div class="text-2xl md:text-3xl font-black text-red-400 whitespace-nowrap overflow-hidden text-ellipsis" id="totalTaxCurrent">R$ 61.300,00</div>
                                     <span class="text-[9px] text-slate-500 italic block leading-tight mt-1">Imposto Compra + (IPVA 4% x Anos) + Combustível</span>
                                     <div class="mt-2 text-[10px] text-red-300/80 font-mono" id="fuelTaxDisplay">+ R$ 11.775 (ICMS Comb.)</div>
                                 </div>
                                 <div class="pt-4 border-t border-white/10">
                                     <span class="text-[9px] text-teal-400 uppercase font-bold block">Com IPVA 1% (Proposto)</span>
-                                    <div class="text-2xl font-bold text-white" id="totalTaxProposed">R$ 46.300,00</div>
+                                    <div class="text-xl md:text-2xl font-bold text-white whitespace-nowrap overflow-hidden text-ellipsis" id="totalTaxProposed">R$ 46.300,00</div>
                                 </div>
                             </div>
                         </div>
@@ -246,7 +246,7 @@ export class CalculatorUI {
                             </div>
                             <div class="text-center mt-6 border-t border-slate-200 pt-4">
                                 <span class="text-[9px] font-black text-teal-600 uppercase">Economia Direta / Ano</span>
-                                <div class="text-3xl font-black text-teal-600" id="ipvaSavings">R$ 3.000,00</div>
+                                <div class="text-2xl md:text-3xl font-black text-teal-600 truncate" id="ipvaSavings">R$ 3.000,00</div>
                             </div>
                         </div>
 
