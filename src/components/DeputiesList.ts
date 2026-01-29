@@ -419,6 +419,14 @@ export class DeputiesList {
     private async handleRegisterResponse(id: number, btn: HTMLButtonElement) {
         if (!id) return;
 
+        // Confirmation dialog
+        const confirmed = confirm(
+            "Deseja informar que o candidato lhe respondeu por e-mail?\n\n" +
+            "Atenção: Esta ação não poderá ser desfeita e será contabilizada permanentemente."
+        );
+
+        if (!confirmed) return;
+
         // Visual feedback immediately
         const icon = btn.querySelector('i');
         if (icon) icon.className = 'fas fa-spinner fa-spin text-white';

@@ -1,6 +1,6 @@
 {
   "name": "ipva1sp-site",
-  "version": "2.25.0",
+  "version": "3.1.0",
   "description": "Site para redução do IPVA SP",
   "scripts": {
     "dev": "vite",
