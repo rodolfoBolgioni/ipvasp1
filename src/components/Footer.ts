@@ -38,7 +38,7 @@ export class Footer {
                                     <a href="https://github.com/rodolfoBolgioni" target="_blank" class="w-7 h-7 bg-slate-700/50 hover:bg-slate-700 text-slate-400 hover:text-white rounded flex items-center justify-center transition-all" title="GitHub Perfil">
                                         <i class="fab fa-github text-xs"></i>
                                     </a>
-                                    <a href="mailto:rodolfo.bolgioni@gmail.com" class="w-7 h-7 bg-red-600/20 hover:bg-red-600 text-red-500 hover:text-white rounded flex items-center justify-center transition-all" title="E-mail Contato">
+                                    <a href="mailto:rodolfo.bolgioni@gmail.com?subject=Sobre%20o%20IPVA%201%20%25&body=Prezado%2C%20gostaria%20de%20dar%20uma%20sugest%C3%A3o." class="w-7 h-7 bg-red-600/20 hover:bg-red-600 text-red-500 hover:text-white rounded flex items-center justify-center transition-all" title="E-mail Contato">
                                         <i class="fas fa-envelope text-xs"></i>
                                     </a>
                                 </div>
