@@ -21,6 +21,8 @@ export class DeputiesList {
     private selectedParty: string | null = null;
     private selectedArea: string | null = null;
     private selectedRegion: string | null = null;
+    private onlyResponded: boolean = false;
+
 
     constructor(modal: Modal) {
         this.service = new DeputyService();
@@ -90,12 +92,16 @@ export class DeputiesList {
                             class="w-full bg-slate-900/50 border border-white/10 rounded-lg pl-9 p-3 text-sm text-white outline-none focus:border-teal-500 transition placeholder-slate-600">
                     </div>
                     
-                    <div class="flex items-center gap-4">
-                         <button id="btnSelectFiltered" class="text-[11px] text-teal-400 font-bold hover:text-teal-300 transition uppercase tracking-wider flex items-center gap-2 bg-teal-500/10 px-4 py-2 rounded-lg border border-teal-500/20 hover:bg-teal-500/20">
+                    <div class="flex items-center gap-4 w-full md:w-auto overflow-x-auto pb-2 md:pb-0">
+                         <button id="btnToggleResponded" class="whitespace-nowrap text-[11px] font-bold transition uppercase tracking-wider flex items-center gap-2 px-4 py-2 rounded-lg border ${this.onlyResponded ? 'bg-green-500/20 text-green-400 border-green-500/40' : 'bg-slate-700/30 text-slate-400 border-white/5 hover:bg-slate-700/50'}">
+                            <i class="fas fa-check-circle"></i> Respondidos
+                        </button>
+                        
+                         <button id="btnSelectFiltered" class="whitespace-nowrap text-[11px] text-teal-400 font-bold hover:text-teal-300 transition uppercase tracking-wider flex items-center gap-2 bg-teal-500/10 px-4 py-2 rounded-lg border border-teal-500/20 hover:bg-teal-500/20">
                             <i class="fas fa-check-double"></i> Selecionar Visíveis
                         </button>
                         
-                        <button id="btnClearAllFilters" class="hidden text-[11px] text-red-400 font-bold hover:text-red-300 transition uppercase tracking-wider flex items-center gap-2 bg-red-500/10 px-4 py-2 rounded-lg border border-red-500/20 hover:bg-red-500/20">
+                        <button id="btnClearAllFilters" class="hidden whitespace-nowrap text-[11px] text-red-400 font-bold hover:text-red-300 transition uppercase tracking-wider flex items-center gap-2 bg-red-500/10 px-4 py-2 rounded-lg border border-red-500/20 hover:bg-red-500/20">
                             <i class="fas fa-times"></i> Limpar Filtros
                         </button>
                     </div>
@@ -134,6 +140,12 @@ export class DeputiesList {
         const searchInput = document.getElementById('deputadoSearch');
         searchInput?.addEventListener('input', (e) => {
             this.currentQuery = (e.target as HTMLInputElement).value;
+            this.renderList();
+        });
+
+        // Toggle Only Responded
+        document.getElementById('btnToggleResponded')?.addEventListener('click', () => {
+            this.onlyResponded = !this.onlyResponded;
             this.renderList();
         });
 
@@ -184,7 +196,7 @@ export class DeputiesList {
         if (!container) return;
 
         // Toggle Clean Filters Button
-        const hasFilters = this.currentQuery || this.selectedParty || this.selectedArea || this.selectedRegion;
+        const hasFilters = this.currentQuery || this.selectedParty || this.selectedArea || this.selectedRegion || this.onlyResponded;
         const btnClear = document.getElementById('btnClearAllFilters');
         if (btnClear) {
             if (hasFilters) btnClear.classList.remove('hidden');
@@ -278,6 +290,20 @@ export class DeputiesList {
 
         this.updateActionBar();
         this.updateCharts();
+
+        // Update Toggle Button State (since we re-render and it's inside the innerHTML or persistent bar)
+        // Wait, the bar isn't re-rendered every time, only the list. 
+        // But the classes might need adjusting if we don't re-render the whole layout.
+        // Actually, the Toggle Button is OUTSIDE the containerId. 
+        // We need to update its classes manually.
+        const toggleBtn = document.getElementById('btnToggleResponded');
+        if (toggleBtn) {
+            if (this.onlyResponded) {
+                toggleBtn.className = "whitespace-nowrap text-[11px] font-bold transition uppercase tracking-wider flex items-center gap-2 px-4 py-2 rounded-lg border bg-green-500/20 text-green-400 border-green-500/40";
+            } else {
+                toggleBtn.className = "whitespace-nowrap text-[11px] font-bold transition uppercase tracking-wider flex items-center gap-2 px-4 py-2 rounded-lg border bg-slate-700/30 text-slate-400 border-white/5 hover:bg-slate-700/50";
+            }
+        }
     }
 
     private renderTruncatedField(icon: string, text: string | undefined, label: string): string {
@@ -364,6 +390,7 @@ export class DeputiesList {
         this.selectedParty = null;
         this.selectedArea = null;
         this.selectedRegion = null;
+        this.onlyResponded = false;
         this.renderList();
     }
 
@@ -388,6 +415,10 @@ export class DeputiesList {
                 const regions = d.electoralBase.split(/[;\n]+/).map(v => v.trim());
                 return regions.some(region => this.service.normalizeRegion(region) === this.selectedRegion);
             });
+        }
+
+        if (this.onlyResponded) {
+            deputies = deputies.filter(d => this.service.getResponseCount(d.id) > 0);
         }
 
         return deputies;
