@@ -172,6 +172,11 @@ export class DeputiesList {
 
         // Initial Render
         this.renderList();
+
+        // Load real data from server
+        this.service.loadResponseCounts().then(() => {
+            this.renderList();
+        });
     }
 
     private renderList() {
@@ -198,6 +203,8 @@ export class DeputiesList {
         deputies.forEach(dep => {
             const isSelected = this.selectedDeputies.has(dep.email);
             const photoUrl = dep.photo || 'https://www.al.sp.gov.br/repositorio/deputado/foto/default.jpg';
+            const responseCount = this.service.getResponseCount(dep.id || 0);
+            const hasVoted = this.service.hasVotedLocal(dep.id || 0);
 
             const card = document.createElement('div');
             card.className = `p-4 rounded-xl border transition-all cursor-pointer relative group flex gap-4 ${isSelected ? 'bg-teal-900/40 border-teal-500' : 'bg-white/5 border-white/10 hover:border-teal-500/50'}`;
@@ -215,8 +222,23 @@ export class DeputiesList {
                             <span class="text-[9px] font-bold text-teal-400 uppercase tracking-wider">${dep.party}</span>
                             <h3 class="font-bold text-white leading-tight text-sm">${dep.name}</h3>
                         </div>
-                        <div class="w-5 h-5 rounded-full border border-white/20 flex items-center justify-center ${isSelected ? 'bg-teal-500 border-teal-500' : ''}">
-                             ${isSelected ? '<i class="fas fa-check text-[10px] text-white"></i>' : ''}
+                        <div class="flex gap-2 items-center">
+                            <!-- Response Counter & Button -->
+                            <div class="flex items-center bg-slate-800 rounded-lg p-1 border border-white/5 gap-2">
+                                <span class="text-[10px] font-bold text-green-400 ml-2" title="${responseCount} pessoas informaram que ele respondeu">
+                                     <i class="fas fa-check-circle mr-0.5"></i> ${responseCount}
+                                </span>
+                                <button class="w-6 h-6 rounded bg-slate-700 hover:bg-slate-600 flex items-center justify-center transition disabled:opacity-50 disabled:cursor-not-allowed response-btn"
+                                    title="${hasVoted ? 'Você já informou' : 'Informar que respondeu'}"
+                                    ${hasVoted ? 'disabled' : ''}
+                                    data-id="${dep.id}">
+                                    <i class="fas fa-bullhorn text-[10px] text-white"></i>
+                                </button>
+                            </div>
+
+                            <div class="w-5 h-5 rounded-full border border-white/20 flex items-center justify-center ${isSelected ? 'bg-teal-500 border-teal-500' : ''}">
+                                 ${isSelected ? '<i class="fas fa-check text-[10px] text-white"></i>' : ''}
+                            </div>
                         </div>
                     </div>
 
@@ -234,8 +256,21 @@ export class DeputiesList {
             `;
 
             card.onclick = (e) => {
+                const target = e.target as HTMLElement;
+
+                // Handle Response Button Click
+                if (target.closest('.response-btn')) {
+                    e.stopPropagation();
+                    const btn = target.closest('.response-btn') as HTMLButtonElement;
+                    if (btn.disabled) return;
+
+                    const id = parseInt(btn.dataset.id || '0');
+                    this.handleRegisterResponse(id, btn);
+                    return;
+                }
+
                 // Prevent selection when clicking "read more"
-                if ((e.target as HTMLElement).classList.contains('read-more-btn')) return;
+                if (target.classList.contains('read-more-btn')) return;
                 this.toggleSelection(dep.email);
             };
             container.appendChild(card);
@@ -379,6 +414,31 @@ export class DeputiesList {
         this.modal.open(emails, message);
 
         this.analytics.trackCounterAction('emails');
+    }
+
+    private async handleRegisterResponse(id: number, btn: HTMLButtonElement) {
+        if (!id) return;
+
+        // Visual feedback immediately
+        const icon = btn.querySelector('i');
+        if (icon) icon.className = 'fas fa-spinner fa-spin text-white';
+        btn.disabled = true;
+
+        const result = await this.service.registerResponse(id);
+
+        if (result.success) {
+            // Success: Update UI via re-render (service already updated local count for optimistic UI)
+            this.renderList();
+            alert('Obrigado! Sua informação foi registrada.');
+        } else {
+            // Error
+            alert(result.message || 'Erro ao registrar.');
+            if (icon) icon.className = 'fas fa-bullhorn text-[10px] text-white';
+            // Only re-enable if it wasn't a duplicate error (UX choice)
+            if (result.message !== 'Already voted') {
+                btn.disabled = false;
+            }
+        }
     }
 
     private renderClearFilter(label: string, _callback: () => void): string {

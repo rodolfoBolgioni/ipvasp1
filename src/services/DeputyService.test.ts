@@ -3,9 +3,9 @@ import { DeputyService } from './DeputyService';
 import { Deputy } from '../core/types';
 
 const MOCK_DEPUTIES: Deputy[] = [
-    { name: "Zebra", party: "A", room: "1", phone: "1", email: "z@z.com" },
-    { name: "Alpha", party: "B", room: "2", phone: "2", email: "a@a.com" },
-    { name: "Beta", party: "A", room: "3", phone: "3", email: "b@b.com" }
+    { id: 1, name: "Zebra", party: "A", room: "1", phone: "1", email: "z@z.com" },
+    { id: 2, name: "Alpha", party: "B", room: "2", phone: "2", email: "a@a.com" },
+    { id: 3, name: "Beta", party: "A", room: "3", phone: "3", email: "b@b.com" }
 ];
 
 describe('DeputyService', () => {
@@ -32,7 +32,7 @@ describe('DeputyService', () => {
 
     it('should handle accents', () => {
         const serviceWithAccents = new DeputyService([
-            { name: "João", party: "PT", room: "1", phone: "1", email: "j@j.com" }
+            { id: 4, name: "João", party: "PT", room: "1", phone: "1", email: "j@j.com" }
         ]);
         const results = serviceWithAccents.search("joao");
         expect(results.length).toBe(1);

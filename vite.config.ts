@@ -22,4 +22,14 @@ export default defineConfig({
         globals: true,
         environment: 'jsdom',
     },
+    server: {
+        host: true, // Listen on all addresses
+        proxy: {
+            '/api': {
+                target: 'http://localhost:8000/api',
+                changeOrigin: true,
+                rewrite: (path) => path.replace(/^\/api/, '')
+            }
+        }
+    }
 });

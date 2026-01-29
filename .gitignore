@@ -3,6 +3,9 @@ env/
 .vscode/sftp.json
 upload_script.txt
 *.log
+bin/
+*.bat
+
 
 # Dependencies
 node_modules/
@@ -12,6 +15,8 @@ node_modules/
 dist/
 dist-ssr/
 *.local
+public/api/config.php
+dist/api/config.php
 
 # Testing
 coverage/

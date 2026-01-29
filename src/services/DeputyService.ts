@@ -7,9 +7,13 @@ const LAST_UPDATED = deputiesData.lastUpdated;
 export class DeputyService {
     private deputies: Deputy[];
 
+    private responseCounts: Record<number, number> = {};
+    private votedDeputies: Set<number> = new Set(); // Local cache for UX
+
     constructor(initialData: Deputy[] = INITIAL_DEPUTIES) {
         this.deputies = initialData;
         this.sortDeputies();
+        this.loadResponseCounts();
     }
 
     private sortDeputies() {
@@ -31,6 +35,52 @@ export class DeputyService {
             });
         });
     }
+
+    // --- Response Tracking API ---
+
+    async loadResponseCounts() {
+        try {
+            const response = await fetch('./api/get_counts.php');
+            if (response.ok) {
+                this.responseCounts = await response.json();
+            }
+        } catch (error) {
+            console.error('Failed to load response counts', error);
+        }
+    }
+
+    getResponseCount(id: number): number {
+        return this.responseCounts[id] || 0;
+    }
+
+    hasVotedLocal(id: number): boolean {
+        return this.votedDeputies.has(id);
+    }
+
+    async registerResponse(id: number): Promise<{ success: boolean; message?: string }> {
+        try {
+            const response = await fetch('./api/register_response.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ deputyId: id })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Optimistic update
+                this.responseCounts[id] = (this.responseCounts[id] || 0) + 1;
+                this.votedDeputies.add(id);
+                return { success: true };
+            } else {
+                return { success: false, message: data.message };
+            }
+        } catch (error) {
+            return { success: false, message: 'Erro de conexão' };
+        }
+    }
+
+    // -----------------------------
 
     getStats(field: keyof Deputy): Record<string, number> {
         const stats: Record<string, number> = {};

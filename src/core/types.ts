@@ -1,4 +1,5 @@
 export interface Deputy {
+    id: number;
     name: string;
     party: string;
     room: string;
