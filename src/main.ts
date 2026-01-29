@@ -28,14 +28,13 @@ document.addEventListener('DOMContentLoaded', () => {
     app.innerHTML = `
         ${header.render()}
         <main>
+            ${impact.render()}
+            ${deputiesList.render()}
             ${calculator.render()}
             ${plan.render()} <!-- Restored Video+PDF -->
             
             <!-- Executive Section -->
             <!-- Executive List Hidden for Validation -->
-
-            ${deputiesList.render()}
-            ${impact.render()}
         </main>
         ${footer.render()}
         ${modal.render()}

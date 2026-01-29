@@ -23,7 +23,7 @@ export class CalculatorUI {
 
     render(): string {
         return `
-        <section class="py-12 md:py-16 -mt-10 relative z-20">
+        <section class="py-12 md:py-16 relative z-20">
             <div class="container mx-auto px-4">
                 <div class="max-w-[1400px] mx-auto bg-white rounded-3xl shadow-2xl p-4 md:p-8 border-4 border-emerald-500">
                     
