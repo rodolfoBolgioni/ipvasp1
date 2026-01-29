@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
 import { execSync } from 'child_process';
 import pkg from './package.json';
 
@@ -17,6 +17,7 @@ export default defineConfig({
     },
     build: {
         outDir: 'dist',
+        sourcemap: true,
     },
     test: {
         globals: true,
