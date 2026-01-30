@@ -42,21 +42,22 @@ function parseImposto($str)
     return (float) $clean;
 }
 
-// Fallback Estimation (Anchor Method)
-// Anchor: 2026-01-30 20:41:13 (User Report)
-// Value: 411.821.785.817,15
+// Fallback Estimation (Sincronia Fina - SP Check)
+// Anchor: 2026-01-30 20:58:30 (User Report 3)
+// Brasil Projected: 411.987.402.789
+// SP Real: 146.875.063.313,65
 function estimateValues()
 {
-    $anchorTime = 1769816473; // 2026-01-30 20:41:13
-    $anchorBrasil = 411821785817.15;
-    $anchorSP = 151550417180.71; // Proportional 36.8%
+    $anchorTime = 1769817510; // 20:58:30
+    $anchorBrasil = 411987402789.00;
+    $anchorSP = 146875063313.65;
 
     $now = time();
     $secondsDiff = $now - $anchorTime;
 
-    // Growth Rates (R$/sec)
-    $rateBrasil = 155000.00; // Slightly conservative rate
-    $rateSP = 57000.00;
+    // Growth Rates (R$/sec) 
+    $rateBrasil = 160016.00;
+    $rateSP = 57000.00; // Adjusted based on 35.5% ratio
 
     return [
         "brasil" => $anchorBrasil + ($secondsDiff * $rateBrasil),
