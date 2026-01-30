@@ -80,6 +80,21 @@ export class DeputyService {
         }
     }
 
+    getTopResponders(limit: number = 5): { deputy: Deputy; count: number }[] {
+        return Object.entries(this.responseCounts)
+            .map(([id, count]) => ({
+                deputy: this.deputies.find(d => d.id === Number(id))!,
+                count: count as number
+            }))
+            .filter(item => item.deputy && item.count > 0)
+            .sort((a, b) => b.count - a.count)
+            .slice(0, limit);
+    }
+
+    getRespondedCount(): number {
+        return Object.values(this.responseCounts).filter(count => count > 0).length;
+    }
+
     // -----------------------------
 
     getStats(field: keyof Deputy): Record<string, number> {
