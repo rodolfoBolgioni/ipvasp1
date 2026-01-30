@@ -1,5 +1,4 @@
 export class ImpostometroSection {
-    private intervalId: any;
     private brValue: number = 0;
     private spValue: number = 0;
 
@@ -24,7 +23,7 @@ export class ImpostometroSection {
     }
 
     startTicker() {
-        this.intervalId = setInterval(() => {
+        setInterval(() => {
             // Increment locally to simulate realtime
             // Add a small random amount roughly every 100ms
             this.brValue += (this.BR_RATE / 10);
