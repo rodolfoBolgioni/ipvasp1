@@ -10,24 +10,45 @@ export class ImpostometroSection {
                     overflow: visible;
                     display: flex;
                     justify-content: center;
+                    /* Default height for desktop */
+                    height: 160px;
                 }
                 
-                /* Container that maintains the aspect ratio while scaling */
                 .impostometro-scaler {
                     width: 640px;
                     height: 160px;
                     transform-origin: top center;
                     flex-shrink: 0;
+                    transition: transform 0.2s ease;
                 }
 
-                @media (max-width: 680px) {
+                /* Tablet / Small Laptop */
+                @media (max-width: 768px) {
                     .impostometro-viewport {
-                        /* Adjusted height to prevent layout shift: (Original Height * (Available Width / 640)) */
-                        height: calc(160px * ((100vw - 40px) / 640));
-                        overflow: hidden;
+                        height: 130px; /* 160px * 0.8 */
                     }
                     .impostometro-scaler {
-                        transform: scale(calc((100vw - 40px) / 640));
+                        transform: scale(0.8);
+                    }
+                }
+
+                /* Standard Mobile */
+                @media (max-width: 550px) {
+                    .impostometro-viewport {
+                        height: 104px; /* 160px * 0.65 */
+                    }
+                    .impostometro-scaler {
+                        transform: scale(0.65);
+                    }
+                }
+
+                /* Small Mobile (like S24, iPhone Mini) - 360px to 400px width */
+                @media (max-width: 420px) {
+                    .impostometro-viewport {
+                        height: 84px; /* 160px * 0.52 */
+                    }
+                    .impostometro-scaler {
+                        transform: scale(0.52);
                     }
                 }
             </style>
