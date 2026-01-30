@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeAll } from 'vitest';
 import { DeputyService } from './DeputyService';
 import { Deputy } from '../core/types';
 
@@ -7,6 +7,16 @@ const MOCK_DEPUTIES: Deputy[] = [
     { id: 2, name: "Alpha", party: "B", room: "2", phone: "2", email: "a@a.com" },
     { id: 3, name: "Beta", party: "A", room: "3", phone: "3", email: "b@b.com" }
 ];
+
+// Mock Fetch to avoid "Invalid URL" error in DeputyService constructor
+beforeAll(() => {
+    global.fetch = vi.fn().mockImplementation(() =>
+        Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve({ 1: 5 }), // Mock some counts
+        })
+    );
+});
 
 describe('DeputyService', () => {
     const service = new DeputyService(MOCK_DEPUTIES);
