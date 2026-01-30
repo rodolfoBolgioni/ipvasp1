@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-01-30T22:33:42.235Z",
+  "lastUpdated": "2026-01-30T22:57:14.089Z",
   "deputies": [
     {
       "id": 300607,
@@ -86,8 +86,8 @@
       "phone": "(11) 3886-6562/ 6563",
       "photo": "https://www3.al.sp.gov.br/legis/biografia/fotos/300497/2f42bf3f57458a3a37942214178dfc3d890395c8884ceb9979a0aea6f0a1850c.jpeg",
       "room": "346",
-      "areasOfActivity": "",
-      "electoralBase": ""
+      "areasOfActivity": "Educação;\nInfraestrutura;\nSaúde;",
+      "electoralBase": "Grande São Paulo;\nVale do Ribeira;\nVale do Paraíba;"
     },
     {
       "id": 300658,
@@ -97,7 +97,7 @@
       "phone": "(11) 3886-6088/ 6089",
       "photo": "https://www3.al.sp.gov.br/legis/biografia/fotos/300658/ec8711d9e474223bd1fdb27dbaff6fb7cab4ecb03d9f34023706fb4734e2868d.jpeg",
       "room": "T45",
-      "areasOfActivity": "",
+      "areasOfActivity": "Direitos das pessoas com deficiência;\nSaúde; \nEducação;",
       "electoralBase": ""
     },
     {
@@ -108,8 +108,8 @@
       "phone": "(11) 3886-6090/ 6091",
       "photo": "https://www3.al.sp.gov.br/legis/biografia/fotos/20230315-170109-id=265-GRD.jpg",
       "room": "168",
-      "areasOfActivity": "",
-      "electoralBase": ""
+      "areasOfActivity": "Defesa Animal;\nSaneamento;\nSaúde;\nMeio Ambiente; \nDireitos da Criança e do Adolescente;",
+      "electoralBase": "Região Metropolitana de São Paulo;\nMauá;"
     },
     {
       "id": 300188,
@@ -207,8 +207,8 @@
       "phone": "(11) 3886-6686/ 6690",
       "photo": "https://www3.al.sp.gov.br/legis/biografia/fotos/20230321-191048-id=148-GRD.jpg",
       "room": "112",
-      "areasOfActivity": "",
-      "electoralBase": ""
+      "areasOfActivity": "Educação;\nFuncionalismo Público;\nAposentados e Pensionistas; \nInclusão Social e Acessibilidade; \nSaúde Pública;\nMeio Ambiente;\nSegurança Pública; \nPolíticas Sociais; \nProteção e Defesa Animal;",
+      "electoralBase": "Estado de São Paulo"
     },
     {
       "id": 300662,
@@ -218,8 +218,8 @@
       "phone": "(11) 3886-6093/ 6094",
       "photo": "https://www3.al.sp.gov.br/legis/biografia/fotos/300662/d9362d62e29435984b085411f9c8dd4f482f95db5b129c476778773a9d4a0cd8.jpeg",
       "room": "162",
-      "areasOfActivity": "",
-      "electoralBase": ""
+      "areasOfActivity": "Defesa dos direitos das pessoas com transtorno do espectro autista (TEA);\nSaúde;\nCausa Animal; \nDefesa e proteção da mulher;",
+      "electoralBase": "Interior paulista;\nIndaiatuba;"
     },
     {
       "id": 300205,
