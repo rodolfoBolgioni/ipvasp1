@@ -16,17 +16,24 @@ export class ImpostometroSection {
                 
                 .impostometro-scaler {
                     width: 640px;
+                    min-width: 640px; /* FORCE fixed width */
                     height: 160px;
                     transform-origin: top center;
                     flex-shrink: 0;
                     transition: transform 0.2s ease;
-                    transform: translateZ(0); /* Hardware acceleration */
+                    transform: translateZ(0); 
+                }
+
+                .impostometro-scaler iframe {
+                    width: 640px !important;
+                    min-width: 640px !important;
+                    max-width: none !important; /* Defeat Tailwind resets */
                 }
 
                 /* Tablet / Small Laptop */
                 @media (max-width: 768px) {
                     .impostometro-viewport {
-                        height: 130px; /* 160px * 0.8 */
+                        height: 130px; 
                     }
                     .impostometro-scaler {
                         transform: scale(0.8) translateZ(0);
@@ -36,17 +43,17 @@ export class ImpostometroSection {
                 /* Standard Mobile */
                 @media (max-width: 550px) {
                     .impostometro-viewport {
-                        height: 104px; /* 160px * 0.65 */
+                        height: 104px; 
                     }
                     .impostometro-scaler {
                         transform: scale(0.65) translateZ(0);
                     }
                 }
 
-                /* Small Mobile (like S24, iPhone Mini) - 360px to 400px width */
+                /* Small Mobile (S24, iPhone Mini) */
                 @media (max-width: 420px) {
                     .impostometro-viewport {
-                        height: 80px; /* 160px * 0.50 */
+                        height: 80px; 
                     }
                     .impostometro-scaler {
                         transform: scale(0.50) translateZ(0);
