@@ -47,11 +47,29 @@ export class ImpostometroSection {
         return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     }
 
+    setupModal() {
+        const btn = document.getElementById('btn-metodologia');
+        const modal = document.getElementById('modal-metodologia');
+        const close = document.getElementById('close-metodologia');
+        const overlay = document.getElementById('overlay-metodologia');
+
+        if (btn && modal && close && overlay) {
+            const toggle = () => {
+                modal.classList.toggle('hidden');
+                overlay.classList.toggle('hidden');
+            };
+            btn.addEventListener('click', toggle);
+            close.addEventListener('click', toggle);
+            overlay.addEventListener('click', toggle);
+        }
+    }
+
     render(): string {
         // Start fetching immediately after render
         setTimeout(() => {
             this.fetchValues();
             this.startTicker();
+            this.setupModal();
         }, 0);
 
         return `
@@ -88,8 +106,45 @@ export class ImpostometroSection {
                     </div>
                 </div>
 
-                <div class="text-center mt-6">
-                    <p class="text-xs text-slate-400">Dados sincronizados com API do Impostômetro (IBPT).</p>
+                <div class="text-center mt-6 flex flex-col items-center gap-2">
+                    <p class="text-xs text-slate-400">Dados baseados no IBPT (Instituto Brasileiro de Planejamento e Tributação).</p>
+                    <button id="btn-metodologia" class="text-xs text-indigo-600 font-bold hover:underline">
+                        ℹ️ Entenda como é calculado
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal Metodologia -->
+            <div id="overlay-metodologia" class="fixed inset-0 bg-black/50 z-40 hidden backdrop-blur-sm transition-all"></div>
+            <div id="modal-metodologia" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden pointer-events-none">
+                <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[80vh] overflow-y-auto pointer-events-auto flex flex-col">
+                    <div class="p-6 border-b border-slate-100 flex justify-between items-center sticky top-0 bg-white z-10">
+                        <h3 class="text-lg font-bold text-slate-800">Metodologia do Impostômetro</h3>
+                        <button id="close-metodologia" class="text-slate-400 hover:text-slate-600 text-2xl leading-none">&times;</button>
+                    </div>
+                    <div class="p-6 text-sm text-slate-600 space-y-4 leading-relaxed">
+                        <p>O Impostômetro considera todos os valores arrecadados pelas três esferas de governo a título de tributos: impostos, taxas e contribuições, incluindo as multas, juros e correção monetária.</p>
+                        
+                        <h4 class="font-bold text-slate-800">Fontes de Dados</h4>
+                        <ul class="list-disc pl-5 space-y-1">
+                            <li><strong>Federal:</strong> Receita Federal, STN, Caixa, TCU e IBGE.</li>
+                            <li><strong>Estadual:</strong> CONFAZ, Secretarias Estaduais de Fazenda e Tribunais de Contas.</li>
+                            <li><strong>Municipal:</strong> STN e Tribunais de Contas dos Estados (Lei de Responsabilidade Fiscal).</li>
+                        </ul>
+
+                        <h4 class="font-bold text-slate-800">Estimativas e Projeções</h4>
+                        <p>Para valores não divulgados em tempo real, utiliza-se a arrecadação do período anterior atualizada pelo índice de crescimento médio dos últimos 3 anos, ajustado por sazonalidade.</p>
+
+                        <h4 class="font-bold text-slate-800">Glossário</h4>
+                        <ul class="list-disc pl-5 space-y-1">
+                            <li><strong>Brasil:</strong> Soma de tributos federais, estaduais e municipais.</li>
+                            <li><strong>População:</strong> Dados do IBGE e Finbra.</li>
+                        </ul>
+
+                        <div class="bg-slate-50 p-4 rounded-lg border border-slate-100 mt-4 text-xs">
+                            <p class="italic">Fonte Oficial: Instituto Brasileiro de Planejamento e Tributação (IBPT).</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
