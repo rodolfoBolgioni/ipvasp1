@@ -33,7 +33,6 @@ document.addEventListener('DOMContentLoaded', () => {
             ${impact.render()}
             ${deputiesList.render()}
             ${calculator.render()}
-            ${calculator.render()}
             ${plan.render()} <!-- Restored Video+PDF -->
             ${impostometro.render()}
             
