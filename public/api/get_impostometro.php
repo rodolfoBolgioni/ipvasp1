@@ -55,8 +55,8 @@ function estimateValues()
         $secondsPassed = 0;
 
     return [
-        "brasil" => $secondsPassed * 120500.45,
-        "sp" => $secondsPassed * 44300.20
+        "brasil" => $secondsPassed * 159987.50, // Calibrated vs Real (~411 Bi in Jan)
+        "sp" => $secondsPassed * 58900.30     // Scaled proportionally
     ];
 }
 
