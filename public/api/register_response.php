@@ -15,7 +15,7 @@ require_once 'config.php';
 try {
     $conn = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME, DB_USER, DB_PASS);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch(PDOException $e) {
+} catch (PDOException $e) {
     http_response_code(500);
     echo json_encode(["message" => "Database connection error"]);
     exit;
@@ -30,11 +30,11 @@ if (!isset($data->deputyId)) {
     exit;
 }
 
-$deputyId = (int)$data->deputyId;
+$deputyId = (int) $data->deputyId;
 
 // Gerar Hash do Usuário (Proteção de Privacidade e Unicidade)
 // Usa IP + UserAgent + Sal
-$salt = "IPVA_SP_SECURE_SALT_2026"; 
+$salt = "IPVA_SP_SECURE_SALT_2026";
 $ip = $_SERVER['REMOTE_ADDR'];
 $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown';
 $userHash = hash('sha256', $ip . $userAgent . $salt);
@@ -44,15 +44,15 @@ try {
     $stmt = $conn->prepare("INSERT INTO votos_respostas (deputy_id, user_hash) VALUES (:deputyId, :userHash)");
     $stmt->bindParam(':deputyId', $deputyId);
     $stmt->bindParam(':userHash', $userHash);
-    
+
     $stmt->execute();
-    
+
     echo json_encode(["message" => "Response registered successfully", "status" => "success"]);
-} catch(PDOException $e) {
+} catch (PDOException $e) {
     // Código 23000 = Violação de integridade (Duplicata)
     if ($e->getCode() == 23000) {
         http_response_code(409); // Conflict
-        echo json_encode(["message" => "You have already registered a response for this deputy.", "status" => "duplicate"]);
+        echo json_encode(["message" => "Você já registrou uma resposta para este deputado.", "status" => "duplicate"]);
     } else {
         http_response_code(500);
         echo json_encode(["message" => "Database error: " . $e->getMessage()]);
