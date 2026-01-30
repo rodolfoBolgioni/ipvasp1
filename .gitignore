@@ -1,6 +1,7 @@
 # Helper scripts and environment
 env/
 .vscode/sftp.json
+.vscode/chrome-debug/
 upload_script.txt
 *.log
 bin/

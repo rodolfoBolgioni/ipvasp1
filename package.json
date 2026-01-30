@@ -4,6 +4,7 @@
   "description": "Site para redução do IPVA SP",
   "scripts": {
     "dev": "vite",
+    "dev:debug": "vite --debug",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "test": "vitest"

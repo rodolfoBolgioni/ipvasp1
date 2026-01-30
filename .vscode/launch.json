@@ -1,0 +1,28 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Launch Chrome contra o Localhost",
+            "url": "http://localhost:5173",
+            "webRoot": "${workspaceFolder}",
+            "userDataDir": "${workspaceFolder}/.vscode/chrome-debug",
+            "runtimeArgs": [
+                "--remote-debugging-port=9222"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Debug Vitest (Testes)",
+            "autoAttachChildProcesses": true,
+            "program": "${workspaceFolder}/node_modules/vitest/vitest.mjs",
+            "args": [
+                "run"
+            ],
+            "smartStep": true,
+            "console": "integratedTerminal"
+        }
+    ]
+}
