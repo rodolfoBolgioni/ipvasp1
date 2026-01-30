@@ -42,21 +42,25 @@ function parseImposto($str)
     return (float) $clean;
 }
 
-// Fallback Estimation (2026 Basis)
-// Brasil ~ 3.8 Trillion/year -> ~120k/sec
-// SP ~ 1.4 Trillion/year -> ~44k/sec
+// Fallback Estimation (Anchor Method)
+// Anchor: 2026-01-30 20:41:13 (User Report)
+// Value: 411.821.785.817,15
 function estimateValues()
 {
-    // Start of 2026
-    $startOfYear = strtotime(date("Y-01-01 00:00:00"));
+    $anchorTime = 1769816473; // 2026-01-30 20:41:13
+    $anchorBrasil = 411821785817.15;
+    $anchorSP = 151550417180.71; // Proportional 36.8%
+
     $now = time();
-    $secondsPassed = $now - $startOfYear;
-    if ($secondsPassed < 0)
-        $secondsPassed = 0;
+    $secondsDiff = $now - $anchorTime;
+
+    // Growth Rates (R$/sec)
+    $rateBrasil = 155000.00; // Slightly conservative rate
+    $rateSP = 57000.00;
 
     return [
-        "brasil" => $secondsPassed * 158834.00, // Adjusted to match ~411 Bi
-        "sp" => $secondsPassed * 58475.00     // 36.8% of Brasil
+        "brasil" => $anchorBrasil + ($secondsDiff * $rateBrasil),
+        "sp" => $anchorSP + ($secondsDiff * $rateSP)
     ];
 }
 
