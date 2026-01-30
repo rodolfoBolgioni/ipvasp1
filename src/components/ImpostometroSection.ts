@@ -3,60 +3,61 @@ export class ImpostometroSection {
         return `
         <section class="py-12 bg-white border-t border-slate-200">
             <style>
+                /* BASE DESKTOP STYLES */
                 .impostometro-viewport {
-                    width: 100%;
-                    max-width: 640px;
-                    margin: 0 auto;
-                    overflow: visible;
-                    display: flex;
-                    justify-content: center;
-                    /* Default height for desktop */
+                    width: 640px;
                     height: 160px;
+                    margin: 0 auto;
+                    overflow: hidden; /* Crop anything outside defined box */
+                    position: relative;
                 }
                 
                 .impostometro-scaler {
                     width: 640px;
-                    min-width: 640px; /* FORCE fixed width */
                     height: 160px;
-                    transform-origin: top center;
-                    flex-shrink: 0;
-                    transition: transform 0.2s ease;
-                    transform: translateZ(0); 
+                    transform-origin: 0 0; /* Scale from Top Left */
+                    position: absolute;
+                    top: 0;
+                    left: 0;
                 }
 
                 .impostometro-scaler iframe {
                     width: 640px !important;
-                    min-width: 640px !important;
-                    max-width: none !important; /* Defeat Tailwind resets */
+                    height: 160px !important;
+                    border: none;
                 }
 
-                /* Tablet / Small Laptop */
-                @media (max-width: 768px) {
+                /* TABLET (Scale 0.8) - Width 512px */
+                @media (max-width: 700px) {
                     .impostometro-viewport {
-                        height: 130px; 
+                        width: 512px;
+                        height: 128px;
                     }
                     .impostometro-scaler {
-                        transform: scale(0.8) translateZ(0);
+                        transform: scale(0.8);
                     }
                 }
 
-                /* Standard Mobile */
+                /* MOBILE STANDARD (Scale 0.6) - Width 384px */
                 @media (max-width: 550px) {
                     .impostometro-viewport {
-                        height: 104px; 
+                        width: 384px;
+                        height: 96px;
                     }
                     .impostometro-scaler {
-                        transform: scale(0.65) translateZ(0);
+                        transform: scale(0.6);
                     }
                 }
 
-                /* Small Mobile (S24, iPhone Mini) */
+                /* MOBILE SMALL/S24 (Scale 0.48) - Width 307px */
+                /* Safety margin for 360px screens with padding */
                 @media (max-width: 420px) {
                     .impostometro-viewport {
-                        height: 80px; 
+                        width: 307.2px;
+                        height: 76.8px;
                     }
                     .impostometro-scaler {
-                        transform: scale(0.50) translateZ(0);
+                        transform: scale(0.48);
                     }
                 }
             </style>
