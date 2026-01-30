@@ -4,43 +4,83 @@ header("Content-Type: application/json; charset=UTF-8");
 
 function fetchUrl($url)
 {
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-    // Mimic a browser to avoid blocking
-    curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36");
-    $data = curl_exec($ch);
-    curl_close($ch);
-    return $data;
+    try {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 3); // Fast timeout
+
+        $headers = [
+            "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            "Referer: https://impostometro.com.br/",
+            "X-Requested-With: XMLHttpRequest",
+            "Accept: application/json, text/javascript, */*; q=0.01"
+        ];
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        $data = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($httpCode !== 200 || !$data)
+            return null;
+        return $data;
+    } catch (Exception $e) {
+        return null;
+    }
 }
 
-// URLs endpoints (Public endpoints used by their widgets)
-$urlBrasil = "https://impostometro.com.br/Contador/GetTotalArrecadado";
-$urlSP = "https://impostometro.com.br/Contador/GetTotalArrecadadoEstado?estado=SP";
-
-$rawBrasil = fetchUrl($urlBrasil);
-$rawSP = fetchUrl($urlSP);
-
-// Helper to clean number string (e.g. "1.234,56" -> 1234.56)
 function parseImposto($str)
 {
     if (!$str)
         return 0;
-    // Remove "R$" and spaces
-    $str = str_replace(['R$', ' '], '', $str);
-    // Remove dots (thousands separator)
-    $str = str_replace('.', '', $str);
-    // Replace comma with dot (decimal separator)
-    $str = str_replace(',', '.', $str);
-    return (float) $str;
+    // Clean weird chars (non-breaking space, R$, etc)
+    $clean = preg_replace('/[^0-9,]/', '', $str);
+    // 1234,56 -> 1234.56
+    $clean = str_replace(',', '.', $clean);
+    return (float) $clean;
 }
 
-$response = [
-    "brasil" => parseImposto($rawBrasil),
-    "sp" => parseImposto($rawSP),
-    "timestamp" => time()
-];
+// Fallback Estimation (2026 Basis)
+// Brasil ~ 3.8 Trillion/year -> ~120k/sec
+// SP ~ 1.4 Trillion/year -> ~44k/sec
+function estimateValues()
+{
+    // Start of 2026
+    $startOfYear = strtotime(date("Y-01-01 00:00:00"));
+    $now = time();
+    $secondsPassed = $now - $startOfYear;
+    if ($secondsPassed < 0)
+        $secondsPassed = 0;
 
-echo json_encode($response);
+    return [
+        "brasil" => $secondsPassed * 120500.45,
+        "sp" => $secondsPassed * 44300.20
+    ];
+}
+
+// 1. Try Fetching
+$rawBrasil = fetchUrl("https://impostometro.com.br/Contador/GetTotalArrecadado");
+$rawSP = fetchUrl("https://impostometro.com.br/Contador/GetTotalArrecadadoEstado?estado=SP");
+
+$valBrasil = parseImposto($rawBrasil);
+$valSP = parseImposto($rawSP);
+
+// 2. Fallback Logic
+if ($valBrasil < 1000) {
+    $estimates = estimateValues();
+    $valBrasil = $estimates["brasil"];
+    $valSP = $estimates["sp"];
+    $source = "estimate_fallback";
+} else {
+    $source = "official_api";
+}
+
+echo json_encode([
+    "brasil" => $valBrasil,
+    "sp" => $valSP,
+    "source" => $source,
+    "timestamp" => time()
+]);
 ?>
