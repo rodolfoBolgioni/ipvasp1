@@ -38,7 +38,7 @@ export class ImpactSection {
                     <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100 text-center hover:border-teal-200 transition-colors shadow-sm">
                         <div class="text-teal-500 text-3xl mb-2"><i class="fas fa-comment-dots"></i></div>
                         <div id="counter-responses" class="text-3xl font-extrabold text-slate-800 block">...</div>
-                        <div class="text-xs text-slate-500 uppercase tracking-widest font-bold mt-1">Deputados que responderam</div>
+                        <div class="text-xs text-slate-500 uppercase tracking-widest font-bold mt-1">Total de Respostas</div>
                     </div>
                 </div>
 

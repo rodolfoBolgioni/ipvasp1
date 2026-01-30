@@ -92,7 +92,7 @@ export class DeputyService {
     }
 
     getRespondedCount(): number {
-        return Object.values(this.responseCounts).filter(count => count > 0).length;
+        return Object.values(this.responseCounts).reduce((sum, count) => sum + count, 0);
     }
 
     // -----------------------------
