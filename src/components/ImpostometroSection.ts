@@ -20,6 +20,7 @@ export class ImpostometroSection {
                     transform-origin: top center;
                     flex-shrink: 0;
                     transition: transform 0.2s ease;
+                    transform: translateZ(0); /* Hardware acceleration */
                 }
 
                 /* Tablet / Small Laptop */
@@ -28,7 +29,7 @@ export class ImpostometroSection {
                         height: 130px; /* 160px * 0.8 */
                     }
                     .impostometro-scaler {
-                        transform: scale(0.8);
+                        transform: scale(0.8) translateZ(0);
                     }
                 }
 
@@ -38,17 +39,17 @@ export class ImpostometroSection {
                         height: 104px; /* 160px * 0.65 */
                     }
                     .impostometro-scaler {
-                        transform: scale(0.65);
+                        transform: scale(0.65) translateZ(0);
                     }
                 }
 
                 /* Small Mobile (like S24, iPhone Mini) - 360px to 400px width */
                 @media (max-width: 420px) {
                     .impostometro-viewport {
-                        height: 84px; /* 160px * 0.52 */
+                        height: 80px; /* 160px * 0.50 */
                     }
                     .impostometro-scaler {
-                        transform: scale(0.52);
+                        transform: scale(0.50) translateZ(0);
                     }
                 }
             </style>
