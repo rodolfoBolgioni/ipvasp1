@@ -8,17 +8,21 @@ export class ImpostometroSection {
                     <p class="text-slate-500">Veja o quanto já pagamos de impostos.</p>
                 </div>
 
-                <div class="flex flex-col md:flex-row justify-center items-center gap-8">
+                <div class="flex flex-col gap-8 items-center">
                     <!-- Brasil -->
-                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 shadow-sm flex flex-col items-center">
-                        <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">Brasil</h3>
-                        <iframe id="impostometro_br" src="https://impostometro.com.br/widget/contador/" width="640" height="160" scrolling="no" frameborder="0"></iframe>
+                    <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col items-center w-full max-w-[640px]">
+                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Brasil</h3>
+                        <div class="w-full overflow-hidden flex justify-center">
+                            <iframe id="impostometro_br" src="https://impostometro.com.br/widget/contador/" width="100%" height="160" scrolling="no" frameborder="0" style="max-width: 640px;"></iframe>
+                        </div>
                     </div>
 
                     <!-- SP -->
-                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 shadow-sm flex flex-col items-center">
-                        <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">São Paulo</h3>
-                        <iframe id="impostometro_sp" src="https://impostometro.com.br/widget/contador/sp" width="640" height="160" scrolling="no" frameborder="0"></iframe>
+                    <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col items-center w-full max-w-[640px]">
+                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">São Paulo</h3>
+                        <div class="w-full overflow-hidden flex justify-center">
+                            <iframe id="impostometro_sp" src="https://impostometro.com.br/widget/contador/sp" width="100%" height="160" scrolling="no" frameborder="0" style="max-width: 640px;"></iframe>
+                        </div>
                     </div>
                 </div>
             </div>
