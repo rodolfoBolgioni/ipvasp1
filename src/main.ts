@@ -5,7 +5,6 @@ import { PlanSection } from './components/PlanSection';
 import { DeputiesList } from './components/DeputiesList';
 // import { ExecutiveList } from './components/ExecutiveList';
 import { ImpactSection } from './components/ImpactSection';
-import { ImpostometroSection } from './components/ImpostometroSection';
 import { Modal } from './components/Modal';
 import { Footer } from './components/Footer';
 
@@ -20,7 +19,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const modal = new Modal();
     const deputiesList = new DeputiesList(modal);
     const impact = new ImpactSection();
-    const impostometro = new ImpostometroSection();
     const footer = new Footer();
 
     // Instantiate Executive List
@@ -34,7 +32,6 @@ document.addEventListener('DOMContentLoaded', () => {
             ${deputiesList.render()}
             ${calculator.render()}
             ${plan.render()} <!-- Restored Video+PDF -->
-            ${impostometro.render()}
             
             <!-- Executive Section -->
             <!-- Executive List Hidden for Validation -->
